@@ -25,11 +25,10 @@ export default function Onboarding() {
   return (
     <View style={styles.screen}>
       <ImageBackground
-        source={require("../assets/images/background4.jpg")} // ✅ change name if needed
+        source={require("../assets/images/background4.jpg")}
         style={styles.bg}
-        resizeMode="cover" // ✅ cover full screen
+        resizeMode="cover"
       >
-        {/* ✅ overlay (optional). reduce opacity so bg is visible */}
         <View style={styles.overlay} />
 
         <View style={styles.container}>
@@ -48,7 +47,7 @@ export default function Onboarding() {
           <TouchableOpacity
             style={styles.button}
             onPress={() =>
-              isLast ? navigation.replace("Login") : setIndex(index + 1)
+              isLast ? navigation.replace("WorkoutHome") : setIndex(index + 1)
             }
           >
             <Text style={styles.buttonText}>
@@ -64,7 +63,7 @@ export default function Onboarding() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    minHeight: "100vh" as any, // ✅ web full height
+    minHeight: "100vh" as any,
   },
 
   bg: {
@@ -76,7 +75,7 @@ const styles = StyleSheet.create({
 
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(255,255,255,0.65)", // ✅ lower opacity = more visible bg
+    backgroundColor: "rgba(255,255,255,0.65)",
   },
 
   container: {

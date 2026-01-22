@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   View,
   Text,
@@ -6,63 +6,38 @@ import {
   TouchableOpacity,
   StyleSheet,
   ImageBackground,
-  Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
 export default function Signup() {
   const navigation = useNavigation<any>();
 
-  // ✅ store what user types
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  const handleSignup = () => {
-    // ✅ just for testing (no backend yet)
-    Alert.alert("Signup Details", `Username: ${username}\nEmail: ${email}`);
-
-    // ✅ simulate success -> go onboarding
-    navigation.replace("Onboarding");
-  };
-
   return (
     <ImageBackground
-      source={require("../assets/images/background5.jpg")} // change to .jpg if needed
+      source={require("../assets/images/background5.jpg")}
       style={styles.bg}
       resizeMode="cover"
     >
-      <Text style={styles.title}>Sign Up</Text>
+      {/* Title */}
+      <View style={styles.top}>
+        <Text style={styles.title}>Sign Up</Text>
+      </View>
 
+      {/* Bottom Card */}
       <View style={styles.card}>
-        <TextInput
-          placeholder="Username"
-          placeholderTextColor="#777"
-          style={styles.input}
-          value={username}
-          onChangeText={setUsername}
-        />
-
-        <TextInput
-          placeholder="Email"
-          placeholderTextColor="#777"
-          style={styles.input}
-          value={email}
-          onChangeText={setEmail}
-          autoCapitalize="none"
-          keyboardType="email-address"
-        />
-
+        <TextInput placeholder="Username" style={styles.input} placeholderTextColor="#777" />
+        <TextInput placeholder="Email" style={styles.input} placeholderTextColor="#777" />
         <TextInput
           placeholder="Password"
-          placeholderTextColor="#777"
           style={styles.input}
-          value={password}
-          onChangeText={setPassword}
           secureTextEntry
+          placeholderTextColor="#777"
         />
 
-        <TouchableOpacity style={styles.button} onPress={handleSignup}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.replace("Onboarding")}
+        >
           <Text style={styles.buttonText}>Sign Up</Text>
         </TouchableOpacity>
 
@@ -79,19 +54,19 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
     height: "100%",
-    justifyContent: "flex-end",
+  },
+
+  top: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingTop: 320, // ⬅️ pushes title down
   },
 
   title: {
-    position: "absolute",
-    bottom: 280, // adjust if needed
-    alignSelf: "center",
     fontSize: 34,
     fontWeight: "bold",
-    color: "#fff",
-    textShadowColor: "rgba(0,0,0,0.45)",
-    textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 4,
+    color: "#000", // black title
   },
 
   card: {
@@ -110,7 +85,6 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     marginBottom: 14,
     fontSize: 16,
-    color: "#111",
   },
 
   button: {
@@ -130,7 +104,7 @@ const styles = StyleSheet.create({
   link: {
     marginTop: 14,
     textAlign: "center",
-    color: "#4DA3FF",
+    color: "#0b63ce",
     textDecorationLine: "underline",
   },
 });

@@ -17,12 +17,19 @@ export default function Login() {
       style={styles.bg}
       resizeMode="cover"
     >
-      {/* Title placed lower (not too high) */}
-      <Text style={styles.title}>Login</Text>
+      {/* Title */}
+      <View style={styles.top}>
+        <Text style={styles.title}>Login</Text>
+      </View>
 
-      {/* Bottom dark card */}
+      {/* Bottom Card */}
       <View style={styles.card}>
-        <TextInput placeholder="Email" style={styles.input} placeholderTextColor="#777" />
+        <TextInput
+          placeholder="Email"
+          style={styles.input}
+          placeholderTextColor="#777"
+        />
+
         <TextInput
           placeholder="Password"
           style={styles.input}
@@ -30,7 +37,10 @@ export default function Login() {
           placeholderTextColor="#777"
         />
 
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.replace("WorkoutHome")}
+        >
           <Text style={styles.buttonText}>Login</Text>
         </TouchableOpacity>
 
@@ -47,22 +57,19 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
     height: "100%",
-    justifyContent: "flex-end",
   },
 
-  // ✅ Move title down by anchoring it above the card
-  title: {
-    position: "absolute",
-    bottom: 300, 
-    alignSelf: "center",
-    fontSize: 34,
-    fontWeight: "bold",
-    color: "#000201",
+  top: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingTop: 320, // ⬅️ pushes title down
+  },
 
-    // optional: makes text readable on bright images
-    textShadowColor: "rgba(0,0,0,0.45)",
-    textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 4,
+  title: {
+    fontSize: 35,
+    fontWeight: "bold",
+    color: "#000", // black like you wanted
   },
 
   card: {
@@ -81,7 +88,6 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     marginBottom: 14,
     fontSize: 16,
-    color: "#111",
   },
 
   button: {
@@ -101,7 +107,7 @@ const styles = StyleSheet.create({
   link: {
     marginTop: 14,
     textAlign: "center",
-    color: "#4DA3FF",
+    color: "#0b63ce",
     textDecorationLine: "underline",
   },
 });
