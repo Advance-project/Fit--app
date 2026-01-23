@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -8,9 +8,12 @@ import {
   ImageBackground,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { setAccount } from "./userStore";
 
 export default function Signup() {
   const navigation = useNavigation<any>();
+
+  const [username, setUsername] = useState("");
 
   return (
     <ImageBackground
@@ -25,7 +28,13 @@ export default function Signup() {
 
       {/* Bottom Card */}
       <View style={styles.card}>
-        <TextInput placeholder="Username" style={styles.input} placeholderTextColor="#777" />
+        <TextInput
+          placeholder="Username"
+          style={styles.input}
+          placeholderTextColor="#777"
+          value={username}
+          onChangeText={setUsername}
+        />
         <TextInput placeholder="Email" style={styles.input} placeholderTextColor="#777" />
         <TextInput
           placeholder="Password"
@@ -36,7 +45,17 @@ export default function Signup() {
 
         <TouchableOpacity
           style={styles.button}
-          onPress={() => navigation.replace("Onboarding")}
+          onPress={() => {
+            const name = username.trim() || "User";
+
+            setAccount({
+              username: name,
+              createdAt: Date.now(),
+              metrics: {},
+            });
+
+            navigation.replace("Onboarding");
+          }}
         >
           <Text style={styles.buttonText}>Sign Up</Text>
         </TouchableOpacity>

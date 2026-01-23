@@ -235,7 +235,11 @@ export default function WorkoutHome() {
 
           <View style={styles.tabDivider} />
 
-          <TouchableOpacity activeOpacity={0.8} style={styles.tab}>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            style={styles.tab}
+            onPress={() => navigation.navigate("Profile")}
+          >
             <Text style={styles.tabIcon}>👤</Text>
             <Text style={styles.tabText}>Profile</Text>
           </TouchableOpacity>
@@ -304,10 +308,7 @@ export default function WorkoutHome() {
 
         {/* ✅ Edit routines modal */}
         <Modal transparent visible={editRoutinesOpen} animationType="fade">
-          <Pressable
-            style={styles.modalOverlay}
-            onPress={() => setEditRoutinesOpen(false)}
-          >
+          <Pressable style={styles.modalOverlay} onPress={() => setEditRoutinesOpen(false)}>
             <Pressable style={styles.modalCard} onPress={() => {}}>
               <View style={styles.folderModalTop}>
                 <Text style={styles.folderModalTitle}>Edit routines</Text>

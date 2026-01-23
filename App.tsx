@@ -11,6 +11,7 @@ import LogWorkout from "./screens/LogWorkout";
 import AddExercise from "./screens/AddExercise";
 import ExploreRoutines from "./screens/ExploreRoutines";
 import Program from "./screens/Program";
+import Profile from "./screens/Profile";
 
 /* =======================
    TYPES (EXPORTED)
@@ -66,6 +67,9 @@ export type RootStackParamList = {
   // ✅ NEW screens
   ExploreRoutines: undefined;
   Program: { programId: string; viewOnly?: boolean } | undefined;
+
+  // ✅ NEW: Profile screen
+  Profile: undefined;
 };
 
 /* =======================
@@ -89,6 +93,7 @@ export default function App() {
         {/* ✅ NEW */}
         <Stack.Screen name="ExploreRoutines" component={ExploreRoutines} />
         <Stack.Screen name="Program" component={Program} />
+        <Stack.Screen name="Profile" component={Profile} />
       </Stack.Navigator>
     </NavigationContainer>
   );
