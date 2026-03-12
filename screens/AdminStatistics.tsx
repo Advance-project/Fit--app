@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import {
   View,
   Text,
@@ -10,6 +10,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { LineChart, BarChart } from "react-native-chart-kit";
+import { isAdminAuthenticated } from "./userStore";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -24,6 +25,12 @@ type StatsResponse = {
 
 export default function AdminStatistics() {
   const navigation = useNavigation<any>();
+
+  useEffect(() => {
+    if (!isAdminAuthenticated()) {
+      navigation.replace("AdminLogin");
+    }
+  }, [navigation]);
 
   
   const stats: StatsResponse = {

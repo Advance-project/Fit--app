@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -10,10 +10,17 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import { isAdminAuthenticated } from "./userStore";
 
 export default function AddWorkoutTemplate() {
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
+
+  useEffect(() => {
+    if (!isAdminAuthenticated()) {
+      navigation.replace("AdminLogin");
+    }
+  }, [navigation]);
 
   const [title, setTitle] = useState("");
   const [subtitle, setSubtitle] = useState("3 routines");

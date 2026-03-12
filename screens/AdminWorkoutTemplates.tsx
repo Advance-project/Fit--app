@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
+import { isAdminAuthenticated } from "./userStore";
 
 type ProgramItem = {
   id: string;
@@ -20,6 +21,12 @@ type ProgramItem = {
 
 export default function AdminWorkoutTemplates() {
   const navigation = useNavigation<any>();
+
+  useEffect(() => {
+    if (!isAdminAuthenticated()) {
+      navigation.replace("AdminLogin");
+    }
+  }, [navigation]);
 
   const [programs, setPrograms] = useState<ProgramItem[]>([
     {

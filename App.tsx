@@ -18,6 +18,7 @@ import ChatRoutine from "./screens/ChatRoutine";
 
 // ✅ NEW: Admin screen
 import Admin from "./screens/Admin";
+import AdminLogin from "./screens/AdminLogin";
 
 // ✅ NEW: Admin users screen
 import AdminUsers from "./screens/AdminUsers";
@@ -119,6 +120,7 @@ export type RootStackParamList = {
   ChatRoutine: undefined;
 
   // ✅ NEW: Admin screen
+  AdminLogin: undefined;
   Admin: undefined;
 
   // ✅ NEW: AdminUsers screen
@@ -173,6 +175,8 @@ export default function App() {
 
         
         <Stack.Screen name="ChatRoutine" component={ChatRoutine} />
+
+        <Stack.Screen name="AdminLogin" component={AdminLogin} />
 
         <Stack.Screen name="Admin" component={Admin} />
 

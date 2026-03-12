@@ -1,10 +1,17 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
+import { isAdminAuthenticated } from "./userStore";
 
 export default function Admin() {
   const navigation = useNavigation<any>();
+
+  useEffect(() => {
+    if (!isAdminAuthenticated()) {
+      navigation.replace("AdminLogin");
+    }
+  }, [navigation]);
 
   const actions = [
     "View all users Details",

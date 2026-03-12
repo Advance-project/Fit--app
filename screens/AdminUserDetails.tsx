@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   View,
   Text,
@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import { isAdminAuthenticated } from "./userStore";
 
 type AdminUser = {
   _id: string;
@@ -37,6 +38,12 @@ type AdminUser = {
 export default function AdminUserDetails() {
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
+
+  useEffect(() => {
+    if (!isAdminAuthenticated()) {
+      navigation.replace("AdminLogin");
+    }
+  }, [navigation]);
 
   const initialUser: AdminUser | undefined = route.params?.user;
   const [user, setUser] = useState<AdminUser | undefined>(initialUser);

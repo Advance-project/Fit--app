@@ -1,7 +1,8 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
+import { isAdminAuthenticated } from "./userStore";
 
 const DUMMY_USERS = [
   "Devanshu",
@@ -21,6 +22,12 @@ const DUMMY_USERS = [
 export default function AdminUsers() {
   const navigation = useNavigation<any>();
   const [q, setQ] = useState("");
+
+  useEffect(() => {
+    if (!isAdminAuthenticated()) {
+      navigation.replace("AdminLogin");
+    }
+  }, [navigation]);
 
   const filtered = useMemo(() => {
     const s = q.trim().toLowerCase();

@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -5,12 +6,34 @@ import {
   TouchableOpacity,
   StyleSheet,
   ImageBackground,
+  Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { setAdminAuthenticated } from "./userStore";
 
-export default function Login() {
+const ADMIN_ID = "admin123";
+const ADMIN_PASSWORD = "fitadmin@2026";
+
+export default function AdminLogin() {
   const navigation = useNavigation<any>();
+  const [adminId, setAdminId] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleAdminLogin = () => {
+    const normalizedAdminId = adminId.trim().toLowerCase();
+    const normalizedPassword = password.trim();
+    const isValid =
+      normalizedAdminId === ADMIN_ID &&
+      normalizedPassword === ADMIN_PASSWORD;
+
+    if (!isValid) {
+      Alert.alert("Access denied", "Invalid admin ID or password.");
+      return;
+    }
+
+    setAdminAuthenticated(true);
+    navigation.replace("Admin");
+  };
 
   return (
     <ImageBackground
@@ -18,17 +41,19 @@ export default function Login() {
       style={styles.bg}
       resizeMode="cover"
     >
-      {/* Title */}
       <View style={styles.top}>
-        <Text style={styles.title}>Login</Text>
+        <Text style={styles.title}>Admin Login</Text>
       </View>
 
-      {/* Bottom Card */}
       <View style={styles.card}>
         <TextInput
-          placeholder="Email"
+          placeholder="Admin ID"
           style={styles.input}
           placeholderTextColor="#777"
+          value={adminId}
+          onChangeText={setAdminId}
+          autoCapitalize="none"
+          autoCorrect={false}
         />
 
         <TextInput
@@ -36,25 +61,23 @@ export default function Login() {
           style={styles.input}
           secureTextEntry
           placeholderTextColor="#777"
+          value={password}
+          onChangeText={setPassword}
+          autoCapitalize="none"
+          autoCorrect={false}
         />
 
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => {
-            setAdminAuthenticated(false);
-            navigation.replace("WorkoutHome");
-          }}
-        >
+        <TouchableOpacity style={styles.button} onPress={handleAdminLogin}>
           <Text style={styles.buttonText}>Login</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => navigation.navigate("Signup")}>
-          <Text style={styles.link}>Don't have an account? Sign Up</Text>
-        </TouchableOpacity>
-
-        {/* ✅ NEW: Login as Admin */}
-        <TouchableOpacity onPress={() => navigation.navigate("AdminLogin")}>
-          <Text style={styles.link}>Login as Admin</Text>
+        <TouchableOpacity
+          onPress={() => {
+            setAdminAuthenticated(false);
+            navigation.navigate("Login");
+          }}
+        >
+          <Text style={styles.link}>Back to User Login</Text>
         </TouchableOpacity>
       </View>
     </ImageBackground>
@@ -78,7 +101,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 35,
     fontWeight: "bold",
-    color: "#000", 
+    color: "#000",
   },
 
   card: {

@@ -11,6 +11,7 @@ export type UserAccount = {
 };
 
 let account: UserAccount | null = null;
+let adminAuthenticated = false;
 
 export const setAccount = (next: UserAccount) => {
   account = next;
@@ -29,4 +30,12 @@ export const updateMetrics = (patch: Partial<UserMetrics>) => {
       ...patch,
     },
   };
+};
+
+export const setAdminAuthenticated = (next: boolean) => {
+  adminAuthenticated = next;
+};
+
+export const isAdminAuthenticated = () => {
+  return adminAuthenticated;
 };
