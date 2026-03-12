@@ -68,7 +68,7 @@ export default function Program() {
 
             <Text style={styles.programName}>{title}</Text>
 
-            <Text style={styles.createdBy}>Created by Hevy</Text>
+            
 
             {!viewOnly ? (
               <TouchableOpacity
