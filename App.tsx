@@ -13,6 +13,27 @@ import ExploreRoutines from "./screens/ExploreRoutines";
 import Program from "./screens/Program";
 import Profile from "./screens/Profile";
 
+// ✅ NEW
+import ChatRoutine from "./screens/ChatRoutine";
+
+// ✅ NEW: Admin screen
+import Admin from "./screens/Admin";
+
+// ✅ NEW: Admin users screen
+import AdminUsers from "./screens/AdminUsers";
+
+// ✅ NEW: Admin user details screen
+import AdminUserDetails from "./screens/AdminUserDetails";
+
+// ✅ NEW: Admin workout templates screen
+import AdminWorkoutTemplates from "./screens/AdminWorkoutTemplates";
+
+// ✅ NEW: Add workout template screen
+import AddWorkoutTemplate from "./screens/AddWorkoutTemplate";
+
+// ✅ NEW: Admin statistics screen
+import AdminStatistics from "./screens/AdminStatistics";
+
 /* =======================
    TYPES (EXPORTED)
 ======================= */
@@ -44,6 +65,29 @@ export type SavedProgram = {
   savedAt: number;
 };
 
+// ✅ NEW: Admin user model (dummy for now)
+export type AdminUser = {
+  _id: string;
+  email: string;
+  username: string;
+  password_hash: string;
+  role: "admin" | "user";
+  is_active: boolean;
+  created_at: string;
+  last_login_at: string;
+  profile: {
+    age: number;
+    height_cm: number;
+    weight_kg: number;
+    sex: string;
+    goal: string;
+  };
+  preferences: {
+    units: string;
+    privacy: { store_chat_history: boolean };
+  };
+};
+
 export type RootStackParamList = {
   Intro: undefined;
   Login: undefined;
@@ -70,6 +114,38 @@ export type RootStackParamList = {
 
   // ✅ NEW: Profile screen
   Profile: undefined;
+
+  // ✅ NEW: Chat screen
+  ChatRoutine: undefined;
+
+  // ✅ NEW: Admin screen
+  Admin: undefined;
+
+  // ✅ NEW: AdminUsers screen
+  AdminUsers: undefined;
+
+  // ✅ NEW: AdminUserDetails screen
+  AdminUserDetails: { user: AdminUser };
+
+  // ✅ NEW: Admin workout templates screen
+  AdminWorkoutTemplates:
+    | {
+        newTemplate?: {
+          id: string;
+          title: string;
+          subtitle: string;
+          level: "Beginner" | "Medium" | "Advanced";
+          goal: "Gain Muscle" | "Strength" | "Lose Weight";
+          typeLabel: string;
+        };
+      }
+    | undefined;
+
+  // ✅ NEW: Add workout template screen
+  AddWorkoutTemplate: undefined;
+
+  // ✅ NEW: Admin statistics screen
+  AdminStatistics: undefined;
 };
 
 /* =======================
@@ -90,10 +166,25 @@ export default function App() {
         <Stack.Screen name="LogWorkout" component={LogWorkout} />
         <Stack.Screen name="AddExercise" component={AddExercise} />
 
-        {/* ✅ NEW */}
+        
         <Stack.Screen name="ExploreRoutines" component={ExploreRoutines} />
         <Stack.Screen name="Program" component={Program} />
         <Stack.Screen name="Profile" component={Profile} />
+
+        
+        <Stack.Screen name="ChatRoutine" component={ChatRoutine} />
+
+        <Stack.Screen name="Admin" component={Admin} />
+
+        <Stack.Screen name="AdminUsers" component={AdminUsers} />
+
+        <Stack.Screen name="AdminUserDetails" component={AdminUserDetails} />
+
+        <Stack.Screen name="AdminWorkoutTemplates" component={AdminWorkoutTemplates} />
+
+        <Stack.Screen name="AddWorkoutTemplate" component={AddWorkoutTemplate} />
+
+        <Stack.Screen name="AdminStatistics" component={AdminStatistics} />
       </Stack.Navigator>
     </NavigationContainer>
   );

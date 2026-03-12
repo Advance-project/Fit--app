@@ -47,6 +47,11 @@ export default function Login() {
         <TouchableOpacity onPress={() => navigation.navigate("Signup")}>
           <Text style={styles.link}>Don't have an account? Sign Up</Text>
         </TouchableOpacity>
+
+        {/* ✅ NEW: Login as Admin */}
+        <TouchableOpacity onPress={() => navigation.navigate("Admin")}>
+          <Text style={styles.link}>Login as Admin</Text>
+        </TouchableOpacity>
       </View>
     </ImageBackground>
   );
@@ -63,13 +68,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    paddingTop: 320, // ⬅️ pushes title down
+    paddingTop: 320, 
   },
 
   title: {
     fontSize: 35,
     fontWeight: "bold",
-    color: "#000", // black like you wanted
+    color: "#000", 
   },
 
   card: {

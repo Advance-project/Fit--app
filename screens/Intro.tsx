@@ -15,10 +15,10 @@ export default function Intro() {
 
   return (
     <View style={styles.container}>
-      {/* Big main word */}
+      
       <Text style={styles.mainText}>Fit</Text>
 
-      {/* Supporting text */}
+     
       <Text style={styles.subText}>
         for better lifestyle{"\n"}
         and mental health.

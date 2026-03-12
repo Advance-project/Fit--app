@@ -24,7 +24,7 @@ type Folder = {
 type RoutineItem = {
   title: string;
   subtitle: string;
-  programId?: string; // ✅ only saved programs will have this
+  programId?: string;
 };
 
 export default function WorkoutHome() {
@@ -32,18 +32,72 @@ export default function WorkoutHome() {
   const route = useRoute<Route>();
 
   const [folders, setFolders] = useState<Folder[]>([
-    { name: "Beginner", workouts: [] },
-    { name: "Strength", workouts: [] },
-    { name: "fhfhkj", workouts: [] },
+    {
+      name: "Beginner",
+      workouts: [
+        {
+          createdAt: 1741651200000,
+          title: "Workout 2026-03-11",
+          exercises: [
+            {
+              id: "air-bike-1",
+              name: "Air Bike",
+              muscle: "Cardio",
+              sets: [
+                { kg: 20, reps: 4 },
+                { kg: 30, reps: 8 },
+                { kg: 50, reps: 10 },
+              ],
+            },
+            {
+              id: "arnold-press-1",
+              name: "Arnold Press (Dumbbell)",
+              muscle: "Shoulders",
+              sets: [
+                { kg: 40, reps: 10 },
+                { kg: 50, reps: 10 },
+                { kg: 60, reps: 12 },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    {
+      name: "Strength",
+      workouts: [
+        {
+          createdAt: 1741651200001,
+          title: "Workout 2026-03-11",
+          exercises: [
+            {
+              id: "air-bike-2",
+              name: "Air Bike",
+              muscle: "Cardio",
+              sets: [
+                { kg: 20, reps: 4 },
+                { kg: 30, reps: 8 },
+                { kg: 50, reps: 10 },
+              ],
+            },
+            {
+              id: "arnold-press-2",
+              name: "Arnold Press (Dumbbell)",
+              muscle: "Shoulders",
+              sets: [
+                { kg: 40, reps: 10 },
+                { kg: 50, reps: 10 },
+                { kg: 60, reps: 12 },
+              ],
+            },
+          ],
+        },
+      ],
+    },
   ]);
 
-  // ✅ changed to settable state so we can add saved programs
-  const [routines, setRoutines] = useState<RoutineItem[]>([
-    { title: "Push Day", subtitle: "Created manually" },
-    { title: "Full Body (AI)", subtitle: "Made with ChatGPT" },
-  ]);
+  const [routines, setRoutines] = useState<RoutineItem[]>([]);
 
-  // ✅ avoid double-adding same saved workout if screen re-renders
   const lastSavedAtRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -66,7 +120,6 @@ export default function WorkoutHome() {
     });
   }, [route.params?.savedFolderName, route.params?.savedWorkout]);
 
-  // ✅ NEW: save Program -> adds to "Your routines"
   const lastSavedProgramAtRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -77,7 +130,6 @@ export default function WorkoutHome() {
     lastSavedProgramAtRef.current = savedProgram.savedAt;
 
     setRoutines((prev) => {
-      // prevent duplicates by programId
       if (prev.some((r) => r.programId === savedProgram.programId)) return prev;
 
       const next: RoutineItem = {
@@ -90,20 +142,14 @@ export default function WorkoutHome() {
     });
   }, [route.params?.savedProgram]);
 
-  // folder details modal
   const [openFolder, setOpenFolder] = useState<Folder | null>(null);
-
-  // edit folders modal
   const [editOpen, setEditOpen] = useState(false);
-
-  // ✅ NEW: edit routines modal
   const [editRoutinesOpen, setEditRoutinesOpen] = useState(false);
 
   const removeFolder = (name: string) => {
     setFolders((prev) => prev.filter((f) => f.name !== name));
   };
 
-  // ✅ NEW: remove routine
   const removeRoutine = (title: string, subtitle: string) => {
     setRoutines((prev) =>
       prev.filter((r) => !(r.title === title && r.subtitle === subtitle))
@@ -116,11 +162,9 @@ export default function WorkoutHome() {
     <SafeAreaView style={styles.safe}>
       <View style={styles.screen}>
         <ScrollView contentContainerStyle={styles.content}>
-          {/* Routines */}
           <Text style={styles.sectionTitle}>Routines</Text>
 
           <View style={styles.twoColRow}>
-            {/* ✅ Create new routine navigates to LogWorkout */}
             <TouchableOpacity
               activeOpacity={0.9}
               style={styles.cardSmall}
@@ -139,7 +183,11 @@ export default function WorkoutHome() {
           </View>
 
           <View style={styles.twoColRow}>
-            <TouchableOpacity activeOpacity={0.9} style={styles.cardSmall}>
+            <TouchableOpacity
+              activeOpacity={0.9}
+              style={styles.cardSmall}
+              onPress={() => navigation.navigate("ChatRoutine")}
+            >
               <Text style={styles.cardText}>Create routine{"\n"}using ChatGPT</Text>
             </TouchableOpacity>
 
@@ -148,11 +196,9 @@ export default function WorkoutHome() {
 
           <View style={styles.sectionDivider} />
 
-          {/* Folders header */}
           <View style={styles.sectionHeaderRow}>
             <Text style={styles.sectionTitle}>Created routines</Text>
 
-            {/* ✅ plus -> Edit */}
             <TouchableOpacity
               style={styles.editBtn}
               onPress={() => setEditOpen(true)}
@@ -162,7 +208,6 @@ export default function WorkoutHome() {
             </TouchableOpacity>
           </View>
 
-          {/* Folders list box */}
           <View style={styles.listBox}>
             {folders.map((folder: Folder, idx: number) => (
               <View key={`${folder.name}-${idx}`}>
@@ -184,7 +229,6 @@ export default function WorkoutHome() {
 
           <View style={styles.sectionDivider} />
 
-          {/* ✅ Your routines header WITH Edit button */}
           <View style={styles.sectionHeaderRow}>
             <Text style={styles.sectionTitle}>Selected routines</Text>
 
@@ -204,7 +248,7 @@ export default function WorkoutHome() {
                   activeOpacity={0.85}
                   style={styles.routineRow}
                   onPress={() => {
-                    if (!item.programId) return; // only saved programs open Program screen
+                    if (!item.programId) return;
                     navigation.navigate("Program", {
                       programId: item.programId,
                       viewOnly: true,
@@ -226,7 +270,6 @@ export default function WorkoutHome() {
           <View style={{ height: 90 }} />
         </ScrollView>
 
-        {/* Bottom tabs */}
         <View style={styles.bottomTabs}>
           <TouchableOpacity activeOpacity={0.8} style={styles.tab}>
             <Text style={styles.tabIcon}>🏋️</Text>
@@ -245,7 +288,6 @@ export default function WorkoutHome() {
           </TouchableOpacity>
         </View>
 
-        {/* Folder details modal */}
         <Modal transparent visible={!!openFolder} animationType="fade">
           <Pressable style={styles.modalOverlay} onPress={() => setOpenFolder(null)}>
             <Pressable style={styles.folderModalCard} onPress={() => {}}>
@@ -283,7 +325,6 @@ export default function WorkoutHome() {
           </Pressable>
         </Modal>
 
-        {/* Edit folders modal */}
         <Modal transparent visible={editOpen} animationType="fade">
           <Pressable style={styles.modalOverlay} onPress={() => setEditOpen(false)}>
             <Pressable style={styles.modalCard} onPress={() => {}}>
@@ -306,7 +347,6 @@ export default function WorkoutHome() {
           </Pressable>
         </Modal>
 
-        {/* ✅ Edit routines modal */}
         <Modal transparent visible={editRoutinesOpen} animationType="fade">
           <Pressable style={styles.modalOverlay} onPress={() => setEditRoutinesOpen(false)}>
             <Pressable style={styles.modalCard} onPress={() => {}}>

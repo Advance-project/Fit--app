@@ -47,7 +47,7 @@ export default function LogWorkout() {
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // ✅ Create modal
+  
   const [createOpen, setCreateOpen] = useState(false);
   const [folderName, setFolderName] = useState("");
 
@@ -58,7 +58,7 @@ export default function LogWorkout() {
     };
   }, []);
 
-  // ✅ receive exercises and MERGE (no duplicates, keep old sets)
+  
   useEffect(() => {
     const incoming = route.params?.selectedExercises ?? [];
     if (!incoming.length) return;
@@ -81,7 +81,7 @@ export default function LogWorkout() {
   const goBackToHome = () => navigation.navigate("WorkoutHome");
   const hasExercises = workoutExercises.length > 0;
 
-  // ✅ stats
+  
   const totalSets = workoutExercises.reduce((acc, ex) => acc + ex.sets.length, 0);
 
   const totalVolume = workoutExercises.reduce((acc, ex) => {
@@ -145,7 +145,7 @@ export default function LogWorkout() {
     );
   };
 
-  // ✅ SAVE WORKOUT (Create -> folder)
+  
   const saveToFolder = () => {
     const name = folderName.trim();
     if (!name) return;
@@ -178,7 +178,7 @@ export default function LogWorkout() {
     });
   };
 
-  // ✅ IMPORTANT: pass existing exercises to AddExercise so it can block duplicates
+ 
   const openAddExercise = () => {
     const existing: ExerciseItem[] = workoutExercises.map((e) => ({
       id: e.id,
@@ -200,13 +200,11 @@ export default function LogWorkout() {
 
           <Text style={styles.headerTitle}>Log Workout</Text>
 
-          {/* ✅ Removed Finish button (only clock remains) */}
-          <View style={styles.headerRight}>
-            <Text style={styles.clockIcon}>⏱</Text>
-          </View>
+          
+          <View style={styles.headerRight} />
         </View>
 
-        {/* Stats row (NO duration, only Volume + Sets) */}
+        
         <View style={styles.statsRow}>
           <View style={styles.statWide}>
             <Text style={styles.statLabel}>Volume</Text>
@@ -218,10 +216,7 @@ export default function LogWorkout() {
             <Text style={styles.statValue}>{totalSets}</Text>
           </View>
 
-          <View style={styles.muscleIcons}>
-            <Text style={{ fontSize: 18 }}>🧍</Text>
-            <Text style={{ fontSize: 18 }}>🧍</Text>
-          </View>
+          <View style={styles.muscleIcons} />
         </View>
 
         {!hasExercises ? (
@@ -366,7 +361,7 @@ export default function LogWorkout() {
           </ScrollView>
         )}
 
-        {/* ✅ CREATE MODAL */}
+        
         <Modal visible={createOpen} transparent animationType="fade">
           <Pressable
             style={styles.modalOverlay}

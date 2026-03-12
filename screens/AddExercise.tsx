@@ -41,21 +41,21 @@ export default function AddExercise() {
 
   const [query, setQuery] = useState("");
 
-  // ✅ existing exercises coming from LogWorkout (to block duplicates)
+  
   const existingExercises = route.params?.existingExercises ?? [];
   const existingIds = useMemo(
     () => new Set(existingExercises.map((e) => e.id)),
     [existingExercises]
   );
 
-  // ✅ equipment / muscle selection UI (bottom sheet)
+  
   const [equipment, setEquipment] = useState<(typeof EQUIPMENT_OPTIONS)[number]>("All Equipment");
   const [muscleFilter, setMuscleFilter] = useState<(typeof MUSCLE_OPTIONS)[number]>("All Muscles");
 
   const [equipmentSheetOpen, setEquipmentSheetOpen] = useState(false);
   const [muscleSheetOpen, setMuscleSheetOpen] = useState(false);
 
-  // ✅ store selected IDs (new selections only)
+  
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
   const data = useMemo(() => {
@@ -63,12 +63,12 @@ export default function AddExercise() {
 
     let list = EXERCISES;
 
-    // ✅ Muscle filter (simple)
+    
     if (muscleFilter !== "All Muscles") {
       list = list.filter((x) => x.muscle === muscleFilter);
     }
 
-    // ✅ Equipment filter UI only (no equipment data in EXERCISES yet)
+    
 
     if (!q) return list;
 
@@ -78,7 +78,7 @@ export default function AddExercise() {
   }, [query, muscleFilter]);
 
   const toggleSelect = (id: string) => {
-    // ✅ block selecting anything already added in LogWorkout
+    
     if (existingIds.has(id)) return;
 
     setSelectedIds((prev) => {
@@ -92,37 +92,34 @@ export default function AddExercise() {
   const selectedCount = selectedIds.size;
 
   const addSelectedToWorkout = () => {
-    // ✅ ONLY send newly selected exercises back
-    const newExercises = EXERCISES.filter((e) => selectedIds.has(e.id));
+  const newExercises = EXERCISES.filter((e) => selectedIds.has(e.id));
 
-    // ✅ IMPORTANT: merge params into the EXISTING LogWorkout route (don’t push a new screen)
+    
     navigation.navigate({
       name: "LogWorkout" as never,
       params: { selectedExercises: newExercises } as never,
       merge: true,
     } as never);
 
-    // optional: clear local selection
+   
     setSelectedIds(new Set());
   };
 
   return (
     <SafeAreaView style={styles.safe} edges={["top"]}>
       <View style={styles.screen}>
-        {/* Top bar */}
+        
         <View style={styles.topBar}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Text style={styles.topBarLink}>Cancel</Text>
-          </TouchableOpacity>
+  <TouchableOpacity onPress={() => navigation.goBack()}>
+    <Text style={styles.topBarLink}>Cancel</Text>
+  </TouchableOpacity>
 
-          <Text style={styles.topBarTitle}>Add Exercise</Text>
+  <Text style={styles.topBarTitle}>Add Exercise</Text>
 
-          <TouchableOpacity onPress={() => {}}>
-            <Text style={styles.topBarLink}>Create</Text>
-          </TouchableOpacity>
-        </View>
+  <View style={{ width: 60 }} />
+</View>
 
-        {/* Search */}
+        
         <View style={styles.searchWrap}>
           <TextInput
             placeholder="Search exercise"
@@ -133,7 +130,7 @@ export default function AddExercise() {
           />
         </View>
 
-        {/* Filters row */}
+        
         <View style={styles.filtersRow}>
           <TouchableOpacity
             activeOpacity={0.85}
@@ -213,7 +210,7 @@ export default function AddExercise() {
           </View>
         )}
 
-        {/* Equipment sheet */}
+        
         <Modal transparent visible={equipmentSheetOpen} animationType="fade">
           <Pressable
             style={styles.sheetOverlay}
@@ -244,7 +241,7 @@ export default function AddExercise() {
           </Pressable>
         </Modal>
 
-        {/* Muscle sheet */}
+       
         <Modal transparent visible={muscleSheetOpen} animationType="fade">
           <Pressable
             style={styles.sheetOverlay}
@@ -390,7 +387,7 @@ const styles = StyleSheet.create({
   },
   bottomBarText: { color: "#fff", fontSize: 18, fontWeight: "800" },
 
-  // bottom sheet
+  
   sheetOverlay: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.35)",

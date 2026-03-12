@@ -21,13 +21,17 @@ export default function Signup() {
       style={styles.bg}
       resizeMode="cover"
     >
-      {/* Title */}
       <View style={styles.top}>
         <Text style={styles.title}>Sign Up</Text>
       </View>
 
-      {/* Bottom Card */}
       <View style={styles.card}>
+        <TextInput
+          placeholder="Email"
+          style={styles.input}
+          placeholderTextColor="#777"
+        />
+
         <TextInput
           placeholder="Username"
           style={styles.input}
@@ -35,13 +39,19 @@ export default function Signup() {
           value={username}
           onChangeText={setUsername}
         />
-        <TextInput placeholder="Email" style={styles.input} placeholderTextColor="#777" />
+        <Text style={styles.helperText}>
+          3-20 characters, letters, numbers, and underscores only
+        </Text>
+
         <TextInput
           placeholder="Password"
           style={styles.input}
           secureTextEntry
           placeholderTextColor="#777"
         />
+        <Text style={styles.helperText}>
+          Min 8 chars: uppercase, lowercase, number, special character
+        </Text>
 
         <TouchableOpacity
           style={styles.button}
@@ -76,16 +86,16 @@ const styles = StyleSheet.create({
   },
 
   top: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingTop: 320, // ⬅️ pushes title down
-  },
+  flex: 1,
+  justifyContent: "center",
+  alignItems: "center",
+  paddingTop: 260,
+},
 
   title: {
     fontSize: 34,
     fontWeight: "bold",
-    color: "#000", // black title
+    color: "#000",
   },
 
   card: {
@@ -102,8 +112,16 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     paddingHorizontal: 16,
     borderRadius: 14,
-    marginBottom: 14,
+    marginBottom: 6,
     fontSize: 16,
+  },
+
+  helperText: {
+    color: "#fff",
+    fontSize: 12,
+    textAlign: "center",
+    marginBottom: 14,
+    marginTop: 2,
   },
 
   button: {

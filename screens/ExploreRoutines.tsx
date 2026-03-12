@@ -128,22 +128,9 @@ export default function ExploreRoutines() {
           <View style={{ height: 90 }} />
         </ScrollView>
 
-        {/* Bottom tabs */}
-        <View style={styles.bottomTabs}>
-          <TouchableOpacity activeOpacity={0.8} style={styles.tab}>
-            <Text style={styles.tabIcon}>🏋️</Text>
-            <Text style={styles.tabTextActive}>Workout</Text>
-          </TouchableOpacity>
-
-          <View style={styles.tabDivider} />
-
-          <TouchableOpacity activeOpacity={0.8} style={styles.tab}>
-            <Text style={styles.tabIcon}>👤</Text>
-            <Text style={styles.tabText}>Profile</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Level sheet */}
+        
+        
+        
         <Modal transparent visible={levelOpen} animationType="fade">
           <Pressable style={styles.sheetOverlay} onPress={() => setLevelOpen(false)}>
             <Pressable style={styles.sheet} onPress={() => {}}>

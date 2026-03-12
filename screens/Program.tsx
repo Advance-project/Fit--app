@@ -54,9 +54,7 @@ export default function Program() {
 
           <Text style={styles.headerTitle}>Program</Text>
 
-          <TouchableOpacity style={styles.headerRight} onPress={() => {}}>
-            <Text style={styles.share}>⤴</Text>
-          </TouchableOpacity>
+          <View style={styles.headerRight} />
         </View>
 
         <ScrollView contentContainerStyle={styles.content}>
@@ -72,7 +70,6 @@ export default function Program() {
 
             <Text style={styles.createdBy}>Created by Hevy</Text>
 
-            {/* ✅ Save OR Go Back (view-only) */}
             {!viewOnly ? (
               <TouchableOpacity
                 style={styles.saveBtn}
@@ -194,7 +191,7 @@ export default function Program() {
           <View style={{ height: 90 }} />
         </ScrollView>
 
-        {/* Bottom tabs */}
+        
         <View style={styles.bottomTabs}>
           <TouchableOpacity activeOpacity={0.8} style={styles.tab}>
             <Text style={styles.tabIcon}>🏋️</Text>
@@ -230,7 +227,6 @@ const styles = StyleSheet.create({
   backArrow: { fontSize: 26, color: "#111827", fontWeight: "600" },
   headerTitle: { flex: 1, textAlign: "center", fontSize: 18, fontWeight: "700", color: "#111827" },
   headerRight: { width: 44, alignItems: "flex-end" },
-  share: { fontSize: 22, color: "#111827", fontWeight: "700" },
 
   content: { paddingHorizontal: 16, paddingTop: 14, paddingBottom: 16 },
 
