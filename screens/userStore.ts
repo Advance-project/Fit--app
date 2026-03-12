@@ -21,6 +21,10 @@ export const getAccount = () => {
   return account;
 };
 
+export const deleteAccount = () => {
+  account = null;
+};
+
 export const updateMetrics = (patch: Partial<UserMetrics>) => {
   if (!account) return;
   account = {

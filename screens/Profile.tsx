@@ -8,9 +8,12 @@ import {
   Modal,
   Pressable,
   TextInput,
+  Alert,
+  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
+import { deleteAccount } from "./userStore";
 
 export default function Profile() {
   const navigation = useNavigation<any>();
@@ -37,6 +40,38 @@ export default function Profile() {
     setWeight(draftWeight);
     setHeight(draftHeight);
     setEditOpen(false);
+  };
+
+  const handleDeleteAccount = () => {
+    const performDelete = () => {
+      deleteAccount();
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "Login" }],
+      });
+    };
+
+    if (Platform.OS === "web") {
+      const confirmed = globalThis.confirm(
+        "Are you sure you want to delete your account? This action cannot be undone."
+      );
+      if (!confirmed) return;
+      performDelete();
+      return;
+    }
+
+    Alert.alert(
+      "Delete account",
+      "Are you sure you want to delete your account? This action cannot be undone.",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: performDelete,
+        },
+      ]
+    );
   };
 
   return (
@@ -213,6 +248,14 @@ export default function Profile() {
             onPress={() => navigation.replace("Login")}
           >
             <Text style={styles.logoutText}>Logout</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.deleteBtn}
+            activeOpacity={0.85}
+            onPress={handleDeleteAccount}
+          >
+            <Text style={styles.deleteText}>Delete Account</Text>
           </TouchableOpacity>
 
           <View style={{ height: 30 }} />
@@ -483,6 +526,21 @@ const styles = StyleSheet.create({
   logoutText: {
     color: "#fff",
     fontSize: 17,
+    fontWeight: "900",
+  },
+
+  deleteBtn: {
+    backgroundColor: "#fff",
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: "#ef4444",
+    paddingVertical: 14,
+    alignItems: "center",
+    marginTop: 10,
+  },
+  deleteText: {
+    color: "#ef4444",
+    fontSize: 16,
     fontWeight: "900",
   },
 
