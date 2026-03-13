@@ -13,31 +13,28 @@ import ExploreRoutines from "./screens/ExploreRoutines";
 import Program from "./screens/Program";
 import Profile from "./screens/Profile";
 
-// ✅ NEW
+
 import ChatRoutine from "./screens/ChatRoutine";
 
-// ✅ NEW: Admin screen
+
 import Admin from "./screens/Admin";
 import AdminLogin from "./screens/AdminLogin";
 
-// ✅ NEW: Admin users screen
+
 import AdminUsers from "./screens/AdminUsers";
 
-// ✅ NEW: Admin user details screen
+
 import AdminUserDetails from "./screens/AdminUserDetails";
 
-// ✅ NEW: Admin workout templates screen
+
 import AdminWorkoutTemplates from "./screens/AdminWorkoutTemplates";
 
-// ✅ NEW: Add workout template screen
+
 import AddWorkoutTemplate from "./screens/AddWorkoutTemplate";
 
-// ✅ NEW: Admin statistics screen
 import AdminStatistics from "./screens/AdminStatistics";
 
-/* =======================
-   TYPES (EXPORTED)
-======================= */
+
 
 export type ExerciseItem = {
   id: string;
@@ -45,7 +42,7 @@ export type ExerciseItem = {
   muscle: string;
 };
 
-// ✅ NEW: used for sets in LogWorkout + saving to folder
+
 export type WorkoutSet = { kg: number; reps: number };
 
 export type WorkoutExercise = ExerciseItem & {
@@ -58,15 +55,14 @@ export type WorkoutData = {
   exercises: WorkoutExercise[];
 };
 
-// ✅ NEW: used for saving program into "Your routines"
 export type SavedProgram = {
   programId: string;
   title: string;
-  subtitle: string; // e.g. "Saved program"
+  subtitle: string; 
   savedAt: number;
 };
 
-// ✅ NEW: Admin user model (dummy for now)
+
 export type AdminUser = {
   _id: string;
   email: string;
@@ -95,7 +91,7 @@ export type RootStackParamList = {
   Signup: undefined;
   Onboarding: undefined;
 
-  // ✅ allow WorkoutHome to receive saved folder + workout + savedProgram
+  
   WorkoutHome:
     | {
         savedFolderName?: string;
@@ -106,30 +102,31 @@ export type RootStackParamList = {
 
   LogWorkout: { selectedExercises?: ExerciseItem[] } | undefined;
 
-  // ✅ allow AddExercise to receive existingExercises (to prevent duplicates)
   AddExercise: { existingExercises?: ExerciseItem[] } | undefined;
 
-  // ✅ NEW screens
-  ExploreRoutines: undefined;
-  Program: { programId: string; viewOnly?: boolean } | undefined;
 
-  // ✅ NEW: Profile screen
+  ExploreRoutines: undefined;
+  Program:
+  | {
+      programId: string;
+      viewOnly?: boolean;
+      title?: string;
+      subtitle?: string;
+    }
+  | undefined;
+
+ 
   Profile: undefined;
 
-  // ✅ NEW: Chat screen
   ChatRoutine: undefined;
 
-  // ✅ NEW: Admin screen
   AdminLogin: undefined;
   Admin: undefined;
 
-  // ✅ NEW: AdminUsers screen
   AdminUsers: undefined;
 
-  // ✅ NEW: AdminUserDetails screen
   AdminUserDetails: { user: AdminUser };
 
-  // ✅ NEW: Admin workout templates screen
   AdminWorkoutTemplates:
     | {
         newTemplate?: {
@@ -143,16 +140,13 @@ export type RootStackParamList = {
       }
     | undefined;
 
-  // ✅ NEW: Add workout template screen
+  
   AddWorkoutTemplate: undefined;
 
-  // ✅ NEW: Admin statistics screen
+
   AdminStatistics: undefined;
 };
 
-/* =======================
-   NAVIGATOR
-======================= */
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 

@@ -49,6 +49,11 @@ export default function AdminUserDetails() {
   const [user, setUser] = useState<AdminUser | undefined>(initialUser);
   const [editOpen, setEditOpen] = useState(false);
 
+  const [editEmail, setEditEmail] = useState("");
+  const [editAge, setEditAge] = useState("");
+  const [editHeight, setEditHeight] = useState("");
+  const [editWeight, setEditWeight] = useState("");
+
   const title = user?.username ?? "User";
 
   const display = useMemo(() => {
@@ -58,20 +63,43 @@ export default function AdminUserDetails() {
       core: [
         { k: "email", v: user.email },
         { k: "username", v: user.username },
-        { k: "password_hash", v: user.password_hash },
-        { k: "is_active", v: user.is_active ? "true" : "false" },
         { k: "created_at", v: user.created_at },
-        { k: "last_login_at", v: user.last_login_at },
       ],
       profile: [
         { k: "age", v: String(user.profile.age) },
         { k: "height_cm", v: String(user.profile.height_cm) },
         { k: "weight_kg", v: String(user.profile.weight_kg) },
         { k: "sex", v: user.profile.sex },
-        { k: "goal", v: user.profile.goal },
       ],
     };
   }, [user]);
+
+  const openEditModal = () => {
+    if (!user) return;
+
+    setEditEmail(user.email);
+    setEditAge(String(user.profile.age));
+    setEditHeight(String(user.profile.height_cm));
+    setEditWeight(String(user.profile.weight_kg));
+    setEditOpen(true);
+  };
+
+  const handleSave = () => {
+    if (!user) return;
+
+    setUser({
+      ...user,
+      email: editEmail,
+      profile: {
+        ...user.profile,
+        age: Number(editAge) || 0,
+        height_cm: Number(editHeight) || 0,
+        weight_kg: Number(editWeight) || 0,
+      },
+    });
+
+    setEditOpen(false);
+  };
 
   if (!user) {
     return (
@@ -94,7 +122,7 @@ export default function AdminUserDetails() {
 
           <Text style={styles.headerTitle}>{title}</Text>
 
-          <TouchableOpacity onPress={() => setEditOpen(true)} style={styles.headerRight}>
+          <TouchableOpacity onPress={openEditModal} style={styles.headerRight}>
             <Text style={styles.editText}>Edit</Text>
           </TouchableOpacity>
         </View>
@@ -125,15 +153,57 @@ export default function AdminUserDetails() {
           <View style={{ height: 30 }} />
         </ScrollView>
 
-        
         <Modal transparent visible={editOpen} animationType="fade">
           <Pressable style={styles.modalOverlay} onPress={() => setEditOpen(false)}>
             <Pressable style={styles.modalCard} onPress={() => {}}>
-              <Text style={styles.modalTitle}>Edit user (UI only)</Text>
+              <Text style={styles.modalTitle}>Edit User</Text>
 
-              <TouchableOpacity style={styles.saveBtn} onPress={() => setEditOpen(false)}>
-                <Text style={styles.saveText}>Close</Text>
-              </TouchableOpacity>
+              <Text style={styles.inputLabel}>Email</Text>
+              <TextInput
+                style={styles.input}
+                value={editEmail}
+                onChangeText={setEditEmail}
+                placeholder="Enter email"
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
+
+              <Text style={styles.inputLabel}>Age</Text>
+              <TextInput
+                style={styles.input}
+                value={editAge}
+                onChangeText={setEditAge}
+                placeholder="Enter age"
+                keyboardType="numeric"
+              />
+
+              <Text style={styles.inputLabel}>Height (cm)</Text>
+              <TextInput
+                style={styles.input}
+                value={editHeight}
+                onChangeText={setEditHeight}
+                placeholder="Enter height"
+                keyboardType="numeric"
+              />
+
+              <Text style={styles.inputLabel}>Weight (kg)</Text>
+              <TextInput
+                style={styles.input}
+                value={editWeight}
+                onChangeText={setEditWeight}
+                placeholder="Enter weight"
+                keyboardType="numeric"
+              />
+
+              <View style={styles.buttonRow}>
+                <TouchableOpacity style={styles.cancelBtn} onPress={() => setEditOpen(false)}>
+                  <Text style={styles.cancelText}>Cancel</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.saveBtn} onPress={handleSave}>
+                  <Text style={styles.saveText}>OK</Text>
+                </TouchableOpacity>
+              </View>
             </Pressable>
           </Pressable>
         </Modal>
@@ -202,9 +272,49 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     padding: 18,
   },
-  modalTitle: { fontSize: 18, fontWeight: "900", marginBottom: 14 },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "900",
+    marginBottom: 14,
+  },
+
+  inputLabel: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#374151",
+    marginBottom: 6,
+    marginTop: 8,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: "#d1d5db",
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+    fontSize: 15,
+    backgroundColor: "#fff",
+  },
+
+  buttonRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 18,
+    gap: 10,
+  },
+  cancelBtn: {
+    flex: 1,
+    backgroundColor: "#e5e7eb",
+    borderRadius: 16,
+    paddingVertical: 14,
+    alignItems: "center",
+  },
+  cancelText: {
+    color: "#111827",
+    fontWeight: "900",
+  },
 
   saveBtn: {
+    flex: 1,
     backgroundColor: "#1e88e5",
     borderRadius: 16,
     paddingVertical: 14,

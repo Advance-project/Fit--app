@@ -18,9 +18,8 @@ type StatsResponse = {
   totalUsers: number;
   newUsersThisWeek: number;
   newUsersLastWeek: number;
-  weeklySignups: number[];
-  monthlyUserGrowth: number[];
-  weeklyActiveUsers: number[];
+  weeklySignupsLastWeek: number[];
+  weeklySignupsThisWeek: number[];
 };
 
 export default function AdminStatistics() {
@@ -32,14 +31,12 @@ export default function AdminStatistics() {
     }
   }, [navigation]);
 
-  
   const stats: StatsResponse = {
     totalUsers: 128,
     newUsersThisWeek: 14,
     newUsersLastWeek: 9,
-    weeklySignups: [4, 7, 6, 9, 8, 11, 14],
-    monthlyUserGrowth: [25, 38, 52, 71, 94, 128],
-    weeklyActiveUsers: [18, 24, 21, 28, 31, 29, 35],
+    weeklySignupsLastWeek: [1, 2, 1, 1, 2, 1, 1],
+    weeklySignupsThisWeek: [1, 2, 2, 1, 3, 2, 3],
   };
 
   const growthDiff = useMemo(() => {
@@ -63,6 +60,7 @@ export default function AdminStatistics() {
     },
     fillShadowGradient: "#0b1220",
     fillShadowGradientOpacity: 0.08,
+    barPercentage: 0.55,
   };
 
   return (
@@ -108,70 +106,47 @@ export default function AdminStatistics() {
           </View>
 
           <View style={styles.chartCard}>
-            <Text style={styles.chartTitle}>New users in last 7 weeks</Text>
-            <LineChart
-              data={{
-                labels: ["W1", "W2", "W3", "W4", "W5", "W6", "W7"],
-                datasets: [
-                  {
-                    data: stats.weeklySignups,
-                  },
-                ],
-              }}
-              width={screenWidth - 48}
-              height={220}
-              yAxisInterval={1}
-              chartConfig={chartConfig}
-              bezier
-              withInnerLines
-              withOuterLines={false}
-              withVerticalLines={false}
-              style={styles.chart}
-            />
-          </View>
-
-          <View style={styles.chartCard}>
-            <Text style={styles.chartTitle}>Total users growth by month</Text>
-            <LineChart
-              data={{
-                labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-                datasets: [
-                  {
-                    data: stats.monthlyUserGrowth,
-                  },
-                ],
-              }}
-              width={screenWidth - 48}
-              height={220}
-              yAxisInterval={1}
-              chartConfig={chartConfig}
-              bezier
-              withInnerLines
-              withOuterLines={false}
-              withVerticalLines={false}
-              style={styles.chart}
-            />
-          </View>
-
-          <View style={styles.chartCard}>
-            <Text style={styles.chartTitle}>Weekly active users</Text>
+            <Text style={styles.chartTitle}>New users last week</Text>
             <BarChart
               data={{
-                labels: ["W1", "W2", "W3", "W4", "W5", "W6", "W7"],
+                labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
                 datasets: [
                   {
-                    data: stats.weeklyActiveUsers,
+                    data: stats.weeklySignupsLastWeek,
                   },
                 ],
               }}
               width={screenWidth - 48}
-              height={240}
+              height={220}
               yAxisLabel=""
               yAxisSuffix=""
               chartConfig={chartConfig}
               fromZero
               withInnerLines
               showValuesOnTopOfBars
+              style={styles.chart}
+            />
+          </View>
+
+          <View style={styles.chartCard}>
+            <Text style={styles.chartTitle}>New users this week</Text>
+            <LineChart
+              data={{
+                labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+                datasets: [
+                  {
+                    data: stats.weeklySignupsThisWeek,
+                  },
+                ],
+              }}
+              width={screenWidth - 48}
+              height={220}
+              yAxisInterval={1}
+              chartConfig={chartConfig}
+              bezier
+              withInnerLines
+              withOuterLines={false}
+              withVerticalLines={false}
               style={styles.chart}
             />
           </View>

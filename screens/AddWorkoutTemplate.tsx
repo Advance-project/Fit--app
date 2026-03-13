@@ -23,14 +23,8 @@ export default function AddWorkoutTemplate() {
   }, [navigation]);
 
   const [title, setTitle] = useState("");
-  const [subtitle, setSubtitle] = useState("3 routines");
-  const [level, setLevel] = useState<"Beginner" | "Medium" | "Advanced">(
-    "Beginner"
-  );
-  const [goal, setGoal] = useState<"Gain Muscle" | "Strength" | "Lose Weight">(
-    "Gain Muscle"
-  );
-  const [typeLabel, setTypeLabel] = useState("FULL\nBODY");
+  const [subtitle, setSubtitle] = useState("3");
+  const [targetMuscle, setTargetMuscle] = useState("Bicep");
 
   const handleSave = () => {
     if (!title.trim()) {
@@ -38,13 +32,16 @@ export default function AddWorkoutTemplate() {
       return;
     }
 
+    if (!subtitle.trim()) {
+      Alert.alert("Missing number", "Please enter no of exercise.");
+      return;
+    }
+
     const newTemplate = {
       id: `template_${Date.now()}`,
       title: title.trim(),
-      subtitle: subtitle.trim() || "3 routines",
-      level,
-      goal,
-      typeLabel: typeLabel.trim() || "FULL\nBODY",
+      subtitle: subtitle.trim() || "3",
+      targetMuscle,
     };
 
     if (route.params?.onSaveTemplate) {
@@ -54,19 +51,20 @@ export default function AddWorkoutTemplate() {
     }
   };
 
-  const levels: ("Beginner" | "Medium" | "Advanced")[] = [
-    "Beginner",
-    "Medium",
-    "Advanced",
+  const targetMuscleOptions = [
+    "Bicep",
+    "Tricep",
+    "Back",
+    "Chest",
+    "Shoulder",
+    "Legs",
+    "Abs",
+    "Bicep / Back",
+    "Chest / Tricep",
+    "Shoulder / Back",
+    "Back / Bicep / Tricep",
+    "Chest / Shoulder / Tricep",
   ];
-
-  const goals: ("Gain Muscle" | "Strength" | "Lose Weight")[] = [
-    "Gain Muscle",
-    "Strength",
-    "Lose Weight",
-  ];
-
-  const typeOptions = ["FULL\nBODY", "PUSH\nPULL\nLEGS"];
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -85,83 +83,39 @@ export default function AddWorkoutTemplate() {
         </View>
 
         <ScrollView contentContainerStyle={styles.content}>
+
           <Text style={styles.label}>Template title</Text>
           <TextInput
             style={styles.input}
-            placeholder="Example: Beginner Upper Body (Gym Equipment)"
+            placeholder="Example: Beginner Upper Body"
             value={title}
             onChangeText={setTitle}
           />
 
-          <Text style={styles.label}>Subtitle</Text>
+          <Text style={styles.label}>No of exercise</Text>
           <TextInput
             style={styles.input}
-            placeholder="Example: 3 routines"
+            placeholder="Example: 3"
             value={subtitle}
             onChangeText={setSubtitle}
+            keyboardType="numeric"
           />
 
-          <Text style={styles.label}>Template type label</Text>
+          <Text style={styles.label}>Target muscles</Text>
           <View style={styles.optionRow}>
-            {typeOptions.map((item) => (
+            {targetMuscleOptions.map((item) => (
               <TouchableOpacity
                 key={item}
                 style={[
                   styles.optionBtn,
-                  typeLabel === item && styles.optionBtnActive,
+                  targetMuscle === item && styles.optionBtnActive,
                 ]}
-                onPress={() => setTypeLabel(item)}
+                onPress={() => setTargetMuscle(item)}
               >
                 <Text
                   style={[
                     styles.optionBtnText,
-                    typeLabel === item && styles.optionBtnTextActive,
-                  ]}
-                >
-                  {item.replace(/\n/g, " / ")}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-
-          <Text style={styles.label}>Level</Text>
-          <View style={styles.optionRow}>
-            {levels.map((item) => (
-              <TouchableOpacity
-                key={item}
-                style={[
-                  styles.optionBtn,
-                  level === item && styles.optionBtnActive,
-                ]}
-                onPress={() => setLevel(item)}
-              >
-                <Text
-                  style={[
-                    styles.optionBtnText,
-                    level === item && styles.optionBtnTextActive,
-                  ]}
-                >
-                  {item}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-
-          <Text style={styles.label}>Goal</Text>
-          <View style={styles.optionRow}>
-            {goals.map((item) => (
-              <TouchableOpacity
-                key={item}
-                style={[
-                  styles.optionBtn,
-                  goal === item && styles.optionBtnActive,
-                ]}
-                onPress={() => setGoal(item)}
-              >
-                <Text
-                  style={[
-                    styles.optionBtnText,
-                    goal === item && styles.optionBtnTextActive,
+                    targetMuscle === item && styles.optionBtnTextActive,
                   ]}
                 >
                   {item}

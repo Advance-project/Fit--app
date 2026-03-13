@@ -24,9 +24,7 @@ export default function Admin() {
       <View style={styles.screen}>
         {/* Header */}
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.headerLeft}>
-            <Text style={styles.backArrow}>←</Text>
-          </TouchableOpacity>
+          <View style={styles.headerLeft} />
 
           <Text style={styles.headerTitle}>Admin</Text>
 
@@ -88,6 +86,13 @@ export default function Admin() {
             );
           })}
 
+          <TouchableOpacity
+            style={styles.logoutBtn}
+            onPress={() => navigation.replace("AdminLogin")}
+          >
+            <Text style={styles.logoutText}>Logout</Text>
+          </TouchableOpacity>
+
           <View style={{ height: 40 }} />
         </ScrollView>
       </View>
@@ -109,8 +114,7 @@ const styles = StyleSheet.create({
     borderBottomColor: "#e5e7eb",
     backgroundColor: "#fff",
   },
-  headerLeft: { width: 44, height: 36, justifyContent: "center" },
-  backArrow: { fontSize: 26, color: "#111827", fontWeight: "600" },
+  headerLeft: { width: 44, height: 36 },
   headerTitle: { flex: 1, textAlign: "center", fontSize: 18, fontWeight: "700", color: "#111827" },
   headerRight: { width: 44 },
 
@@ -135,6 +139,22 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginBottom: 12,
   },
+
   actionText: { fontSize: 16, fontWeight: "800", color: "#0b1220" },
+
   chevron: { fontSize: 26, color: "#9aa6b2", paddingLeft: 12 },
+
+  logoutBtn: {
+    marginTop: 20,
+    backgroundColor: "#ef4444",
+    borderRadius: 14,
+    paddingVertical: 16,
+    alignItems: "center",
+  },
+
+  logoutText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "900",
+  },
 });

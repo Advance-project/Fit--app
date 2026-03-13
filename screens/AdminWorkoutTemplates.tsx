@@ -14,9 +14,7 @@ type ProgramItem = {
   id: string;
   title: string;
   subtitle: string;
-  level: "Beginner" | "Medium" | "Advanced";
-  goal: "Gain Muscle" | "Strength" | "Lose Weight";
-  typeLabel: string;
+  targetMuscle: string;
 };
 
 export default function AdminWorkoutTemplates() {
@@ -30,36 +28,10 @@ export default function AdminWorkoutTemplates() {
 
   const [programs, setPrograms] = useState<ProgramItem[]>([
     {
-      id: "ppl_beginner_gym",
-      title: "Beginner Push/Pull/Legs\n(Gym Equipment)",
-      subtitle: "3 routines",
-      level: "Beginner",
-      goal: "Gain Muscle",
-      typeLabel: "PUSH\nPULL\nLEGS",
-    },
-    {
-      id: "fullbody_intermediate_gym",
-      title: "Intermediate Full-Body\n(Gym Equipment)",
-      subtitle: "3 routines",
-      level: "Medium",
-      goal: "Strength",
-      typeLabel: "FULL\nBODY",
-    },
-    {
-      id: "ppl_intermediate_gym",
-      title: "Intermediate Push/Pull/Legs\n(Gym Equipment)",
-      subtitle: "3 routines",
-      level: "Medium",
-      goal: "Gain Muscle",
-      typeLabel: "PUSH\nPULL\nLEGS",
-    },
-    {
-      id: "fullbody_beginner_home",
-      title: "Beginner Full-Body\n(Equipment-Free)",
-      subtitle: "3 routines",
-      level: "Beginner",
-      goal: "Lose Weight",
-      typeLabel: "FULL\nBODY",
+      id: "default_template_1",
+      title: "Chest",
+      subtitle: "2",
+      targetMuscle: "Chest",
     },
   ]);
 
@@ -107,19 +79,20 @@ export default function AdminWorkoutTemplates() {
               <TouchableOpacity
                 style={styles.cardTop}
                 onPress={() =>
-                  navigation.navigate("Program", { programId: p.id })
+                  navigation.navigate("Program", {
+                    programId: p.id,
+                    title: p.title,
+                    subtitle: p.subtitle,
+                  })
                 }
               >
                 <View style={styles.programThumb}>
-                  <Text style={styles.programThumbText}>{p.typeLabel}</Text>
+                  <Text style={styles.programThumbText}>{p.title}</Text>
                 </View>
 
                 <View style={styles.programInfo}>
                   <Text style={styles.programTitle}>{p.title}</Text>
-                  <Text style={styles.programSub}>{p.subtitle}</Text>
-                  <Text style={styles.metaText}>
-                    {p.level} • {p.goal}
-                  </Text>
+                  <Text style={styles.programSub}>{p.subtitle} exercise</Text>
                 </View>
               </TouchableOpacity>
 
@@ -214,32 +187,32 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginRight: 14,
+    paddingHorizontal: 8,
   },
 
   programThumbText: {
-    fontSize: 15,
+    fontSize: 18,
     fontWeight: "900",
     color: "#2583e8",
     textAlign: "center",
   },
 
-  programInfo: { flex: 1 },
+  programInfo: {
+    flex: 1,
+    justifyContent: "center",
+  },
 
   programTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "900",
+    color: "#111827",
   },
 
   programSub: {
     marginTop: 8,
-    color: "#98a1ad",
-    fontWeight: "700",
-  },
-
-  metaText: {
-    marginTop: 10,
     color: "#6b7280",
-    fontWeight: "700",
+    fontWeight: "800",
+    fontSize: 18,
   },
 
   removeBtn: {
