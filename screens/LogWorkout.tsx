@@ -50,6 +50,7 @@ export default function LogWorkout() {
   
   const [createOpen, setCreateOpen] = useState(false);
   const [folderName, setFolderName] = useState("");
+  const [screenMessage, setScreenMessage] = useState("");
 
   useEffect(() => {
     timerRef.current = setInterval(() => setSeconds((s) => s + 1), 1000);
@@ -131,22 +132,13 @@ export default function LogWorkout() {
     );
   };
 
-  const toggleDone = (exerciseId: string, setId: string) => {
-    setWorkoutExercises((prev) =>
-      prev.map((ex) => {
-        if (ex.id !== exerciseId) return ex;
-        return {
-          ...ex,
-          sets: ex.sets.map((s) =>
-            s.id === setId ? { ...s, done: !s.done } : s
-          ),
-        };
-      })
-    );
-  };
-
   
   const saveToFolder = () => {
+    if (!workoutExercises.length) {
+      setScreenMessage("At least one exercise should be added.");
+      return;
+    }
+
     const name = folderName.trim();
     if (!name) return;
 
@@ -187,6 +179,16 @@ export default function LogWorkout() {
     }));
 
     navigation.navigate("AddExercise", { existingExercises: existing } as never);
+  };
+
+  const openCreateModal = () => {
+    if (!workoutExercises.length) {
+      setScreenMessage("At least one exercise should be added.");
+      return;
+    }
+
+    setScreenMessage("");
+    setCreateOpen(true);
   };
 
   return (
@@ -234,7 +236,7 @@ export default function LogWorkout() {
             <View style={styles.twoBtnsRow}>
               <TouchableOpacity
                 style={styles.grayBtn}
-                onPress={() => setCreateOpen(true)}
+                onPress={openCreateModal}
               >
                 <Text style={styles.grayBtnText}>Create</Text>
               </TouchableOpacity>
@@ -243,6 +245,10 @@ export default function LogWorkout() {
                 <Text style={styles.redBtnText}>Discard Workout</Text>
               </TouchableOpacity>
             </View>
+
+            {!!screenMessage && (
+              <Text style={styles.screenWarningText}>{screenMessage}</Text>
+            )}
           </View>
         ) : (
           <ScrollView contentContainerStyle={{ paddingBottom: 30 }}>
@@ -253,39 +259,27 @@ export default function LogWorkout() {
                     <Text style={{ fontSize: 24 }}>🏋️</Text>
                     <View style={{ flex: 1 }}>
                       <Text style={styles.exerciseName}>{ex.name}</Text>
-                      <Text style={styles.notesPlaceholder}>Add notes here...</Text>
                     </View>
-                    <Text style={styles.menuDots}>⋮</Text>
-                  </View>
-
-                  <View style={styles.restRow}>
-                    <Text style={styles.restIcon}>⏱</Text>
-                    <Text style={styles.restText}>Rest Timer: OFF</Text>
                   </View>
 
                   <View style={styles.tableHeader}>
-                    <Text style={[styles.th, { width: 60 }]}>SET</Text>
-                    <Text style={[styles.th, { flex: 1 }]}>PREVIOUS</Text>
-                    <Text style={[styles.th, { width: 80, textAlign: "center" }]}>
+                    <Text style={[styles.th, styles.colSet]}>SET</Text>
+                    <Text style={[styles.th, styles.colPrevious]}>PREV KG</Text>
+                    <Text style={[styles.th, styles.colNumber]}>
                       KG
                     </Text>
-                    <Text style={[styles.th, { width: 80, textAlign: "center" }]}>
+                    <Text style={[styles.th, styles.colNumber]}>
                       REPS
-                    </Text>
-                    <Text style={[styles.th, { width: 40, textAlign: "right" }]}>
-                      ✓
                     </Text>
                   </View>
 
                   {ex.sets.map((set) => (
                     <View key={set.id} style={styles.tableRow}>
-                      <Text style={[styles.td, { width: 60 }]}>{set.id}</Text>
-                      <Text style={[styles.td, { flex: 1, color: "#9ca3af" }]}>
-                        -
-                      </Text>
+                      <Text style={[styles.td, styles.colSet]}>{set.id}</Text>
+                      <Text style={[styles.td, styles.colPrevious, styles.previousValue]}>- kg</Text>
 
                       <TextInput
-                        style={[styles.inputCell, { width: 80 }]}
+                        style={[styles.inputCell, styles.colNumber]}
                         placeholder="0"
                         keyboardType="numeric"
                         value={set.kg}
@@ -295,7 +289,7 @@ export default function LogWorkout() {
                       />
 
                       <TextInput
-                        style={[styles.inputCell, { width: 80 }]}
+                        style={[styles.inputCell, styles.colNumber]}
                         placeholder="0"
                         keyboardType="numeric"
                         value={set.reps}
@@ -303,26 +297,6 @@ export default function LogWorkout() {
                           updateSetField(ex.id, set.id, "reps", v)
                         }
                       />
-
-                      <View style={{ width: 40, alignItems: "flex-end" }}>
-                        <TouchableOpacity
-                          activeOpacity={0.85}
-                          onPress={() => toggleDone(ex.id, set.id)}
-                          style={[
-                            styles.checkCircle,
-                            set.done && styles.checkCircleDone,
-                          ]}
-                        >
-                          <Text
-                            style={{
-                              color: set.done ? "#1e88e5" : "#9ca3af",
-                              fontWeight: "900",
-                            }}
-                          >
-                            ✓
-                          </Text>
-                        </TouchableOpacity>
-                      </View>
                     </View>
                   ))}
 
@@ -333,6 +307,12 @@ export default function LogWorkout() {
                   >
                     <Text style={styles.addSetText}>＋ Add Set</Text>
                   </TouchableOpacity>
+
+                  {ex.sets.length > 5 ? (
+                    <Text style={styles.restWarningText}>
+                      Warning: More than 5 sets logged. Consider resting this muscle.
+                    </Text>
+                  ) : null}
 
                   <View style={styles.blockDivider} />
                 </View>
@@ -348,7 +328,7 @@ export default function LogWorkout() {
               <View style={styles.twoBtnsRow}>
                 <TouchableOpacity
                   style={styles.grayBtn}
-                  onPress={() => setCreateOpen(true)}
+                  onPress={openCreateModal}
                 >
                   <Text style={styles.grayBtnText}>Create</Text>
                 </TouchableOpacity>
@@ -357,6 +337,10 @@ export default function LogWorkout() {
                   <Text style={styles.redBtnText}>Discard Workout</Text>
                 </TouchableOpacity>
               </View>
+
+              {!!screenMessage && (
+                <Text style={styles.screenWarningText}>{screenMessage}</Text>
+              )}
             </View>
           </ScrollView>
         )}
@@ -483,6 +467,18 @@ const styles = StyleSheet.create({
   },
   grayBtnText: { fontSize: 18, fontWeight: "700", color: "#111827" },
   redBtnText: { fontSize: 18, fontWeight: "700", color: "#ef4444" },
+  screenWarningText: {
+    marginTop: 12,
+    width: "100%",
+    color: "#b45309",
+    backgroundColor: "#fffbeb",
+    borderWidth: 1,
+    borderColor: "#fde68a",
+    borderRadius: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    fontWeight: "700",
+  },
 
   workoutArea: { paddingHorizontal: 14, paddingTop: 14 },
   exerciseBlock: { marginBottom: 8 },
@@ -505,11 +501,16 @@ const styles = StyleSheet.create({
     marginTop: 18,
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 10,
+    paddingVertical: 8,
   },
-  th: { color: "#9ca3af", fontWeight: "800", letterSpacing: 0.5 },
+  th: { color: "#9ca3af", fontWeight: "800", letterSpacing: 0.5, fontSize: 12 },
 
-  tableRow: { flexDirection: "row", alignItems: "center", paddingVertical: 10 },
+  colSet: { width: 56 },
+  colPrevious: { width: 92, textAlign: "center" },
+  colNumber: { width: 86, textAlign: "center" },
+  previousValue: { color: "#9ca3af" },
+
+  tableRow: { flexDirection: "row", alignItems: "center", paddingVertical: 8 },
   td: { fontSize: 20, fontWeight: "700", color: "#111827" },
   inputCell: {
     backgroundColor: "#fff",
@@ -520,16 +521,6 @@ const styles = StyleSheet.create({
     color: "#111827",
   },
 
-  checkCircle: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
-    backgroundColor: "#e5e7eb",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  checkCircleDone: { backgroundColor: "#eaf3ff" },
-
   addSetBtn: {
     marginTop: 10,
     backgroundColor: "#f3f4f6",
@@ -538,6 +529,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   addSetText: { fontSize: 20, fontWeight: "700", color: "#111827" },
+  restWarningText: {
+    marginTop: 10,
+    color: "#b45309",
+    backgroundColor: "#fffbeb",
+    borderWidth: 1,
+    borderColor: "#fde68a",
+    borderRadius: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    fontWeight: "700",
+  },
 
   blockDivider: { marginTop: 18, height: 1, backgroundColor: "#eef2f7" },
 

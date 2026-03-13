@@ -11,7 +11,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import type { RootStackParamList, WorkoutData, SavedProgram } from "../App";
+import type { RootStackParamList, WorkoutData } from "../App";
 
 type Nav = NativeStackNavigationProp<RootStackParamList, "WorkoutHome">;
 type Route = RouteProp<RootStackParamList, "WorkoutHome">;
@@ -19,12 +19,6 @@ type Route = RouteProp<RootStackParamList, "WorkoutHome">;
 type Folder = {
   name: string;
   workouts: WorkoutData[];
-};
-
-type RoutineItem = {
-  title: string;
-  subtitle: string;
-  programId?: string;
 };
 
 export default function WorkoutHome() {
@@ -96,8 +90,6 @@ export default function WorkoutHome() {
     },
   ]);
 
-  const [routines, setRoutines] = useState<RoutineItem[]>([]);
-
   const lastSavedAtRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -120,40 +112,11 @@ export default function WorkoutHome() {
     });
   }, [route.params?.savedFolderName, route.params?.savedWorkout]);
 
-  const lastSavedProgramAtRef = useRef<number | null>(null);
-
-  useEffect(() => {
-    const savedProgram: SavedProgram | undefined = route.params?.savedProgram;
-    if (!savedProgram) return;
-
-    if (lastSavedProgramAtRef.current === savedProgram.savedAt) return;
-    lastSavedProgramAtRef.current = savedProgram.savedAt;
-
-    setRoutines((prev) => {
-      if (prev.some((r) => r.programId === savedProgram.programId)) return prev;
-
-      const next: RoutineItem = {
-        title: savedProgram.title,
-        subtitle: savedProgram.subtitle,
-        programId: savedProgram.programId,
-      };
-
-      return [next, ...prev];
-    });
-  }, [route.params?.savedProgram]);
-
   const [openFolder, setOpenFolder] = useState<Folder | null>(null);
   const [editOpen, setEditOpen] = useState(false);
-  const [editRoutinesOpen, setEditRoutinesOpen] = useState(false);
 
   const removeFolder = (name: string) => {
     setFolders((prev) => prev.filter((f) => f.name !== name));
-  };
-
-  const removeRoutine = (title: string, subtitle: string) => {
-    setRoutines((prev) =>
-      prev.filter((r) => !(r.title === title && r.subtitle === subtitle))
-    );
   };
 
   const folderNames = useMemo(() => folders.map((f) => f.name), [folders]);
@@ -162,7 +125,7 @@ export default function WorkoutHome() {
     <SafeAreaView style={styles.safe}>
       <View style={styles.screen}>
         <ScrollView contentContainerStyle={styles.content}>
-          <Text style={styles.sectionTitle}>Routines</Text>
+          <Text style={styles.sectionTitle}>Workout</Text>
 
           <View style={styles.twoColRow}>
             <TouchableOpacity
@@ -223,46 +186,6 @@ export default function WorkoutHome() {
                 </TouchableOpacity>
 
                 {idx !== folders.length - 1 && <View style={styles.rowDivider} />}
-              </View>
-            ))}
-          </View>
-
-          <View style={styles.sectionDivider} />
-
-          <View style={styles.sectionHeaderRow}>
-            <Text style={styles.sectionTitle}>Selected routines</Text>
-
-            <TouchableOpacity
-              style={styles.editBtn}
-              onPress={() => setEditRoutinesOpen(true)}
-              activeOpacity={0.85}
-            >
-              <Text style={styles.editText}>Edit</Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.listBox}>
-            {routines.map((item: RoutineItem, idx: number) => (
-              <View key={`${item.title}-${idx}`}>
-                <TouchableOpacity
-                  activeOpacity={0.85}
-                  style={styles.routineRow}
-                  onPress={() => {
-                    if (!item.programId) return;
-                    navigation.navigate("Program", {
-                      programId: item.programId,
-                      viewOnly: true,
-                    });
-                  }}
-                >
-                  <View style={{ flex: 1 }}>
-                    <Text style={styles.routineTitle}>{item.title}</Text>
-                    <Text style={styles.routineSub}>{item.subtitle}</Text>
-                  </View>
-                  <Text style={styles.chevron}>›</Text>
-                </TouchableOpacity>
-
-                {idx !== routines.length - 1 && <View style={styles.rowDivider} />}
               </View>
             ))}
           </View>
@@ -347,27 +270,6 @@ export default function WorkoutHome() {
           </Pressable>
         </Modal>
 
-        <Modal transparent visible={editRoutinesOpen} animationType="fade">
-          <Pressable style={styles.modalOverlay} onPress={() => setEditRoutinesOpen(false)}>
-            <Pressable style={styles.modalCard} onPress={() => {}}>
-              <View style={styles.folderModalTop}>
-                <Text style={styles.folderModalTitle}>Edit routines</Text>
-                <TouchableOpacity onPress={() => setEditRoutinesOpen(false)}>
-                  <Text style={styles.modalClose}>✕</Text>
-                </TouchableOpacity>
-              </View>
-
-              {routines.map((r) => (
-                <View key={`${r.title}-${r.subtitle}`} style={styles.editRow}>
-                  <Text style={styles.editRowText}>{r.title}</Text>
-                  <TouchableOpacity onPress={() => removeRoutine(r.title, r.subtitle)}>
-                    <Text style={styles.removeText}>Remove</Text>
-                  </TouchableOpacity>
-                </View>
-              ))}
-            </Pressable>
-          </Pressable>
-        </Modal>
       </View>
     </SafeAreaView>
   );
@@ -469,28 +371,6 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: "#e6ebf2",
     marginLeft: 16,
-  },
-
-  routineRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 16,
-    paddingHorizontal: 16,
-  },
-  routineTitle: {
-    fontSize: 18,
-    fontWeight: "800",
-    color: "#0b1220",
-  },
-  routineSub: {
-    marginTop: 4,
-    color: "#7a889c",
-    fontWeight: "600",
-  },
-  chevron: {
-    fontSize: 26,
-    color: "#9aa6b2",
-    paddingLeft: 12,
   },
 
   bottomTabs: {

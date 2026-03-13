@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   View,
   Text,
@@ -10,35 +10,91 @@ import {
   TextInput,
   Alert,
   Platform,
+  Dimensions,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { deleteAccount } from "./userStore";
+import { BarChart } from "react-native-chart-kit";
+
+const MUSCLE_GROUPS = [
+  "Back",
+  "Biceps",
+  "Chest",
+  "Triceps",
+  "Shoulder",
+  "Abs",
+  "Legs",
+  "Cardio",
+] as const;
+
+const CHART_LABELS = ["Back", "Bcps", "Chst", "Tri", "Shld", "Abs", "Legs", "Crdo"];
+
+const WEEKLY_SUMMARY = [
+  {
+    title: "Last Week",
+    sets: [8, 6, 10, 5, 7, 4, 12, 3],
+  },
+  {
+    title: "Current Week",
+    sets: [6, 4, 8, 6, 5, 3, 9, 2],
+  },
+  {
+    title: "Upcoming Week",
+    sets: [7, 5, 9, 5, 6, 4, 10, 3],
+  },
+] as const;
+
+const CARD_WIDTH = Dimensions.get("window").width - 28;
+
+// Returns a segment count so Y-axis ticks land on round numbers
+function getChartSegments(sets: readonly number[]): number {
+  const max = Math.max(...sets);
+  if (max <= 5)  return 5;   // step = 1
+  if (max <= 10) return 5;   // step = 2
+  if (max <= 20) return 4;   // step = 5
+  if (max <= 50) return 5;   // step = 10
+  return 5;                  // step = max/5
+}
 
 export default function Profile() {
   const navigation = useNavigation<any>();
 
   const [editOpen, setEditOpen] = useState(false);
+  const [weeklyIndex, setWeeklyIndex] = useState(1);
+  const weeklyScrollRef = useRef<ScrollView>(null);
+
+  useEffect(() => {
+    weeklyScrollRef.current?.scrollTo({ x: CARD_WIDTH * 1, animated: false });
+  }, []);
 
   const [age, setAge] = useState("");
+  const [sex, setSex] = useState("");
   const [weight, setWeight] = useState("");
   const [height, setHeight] = useState("");
+  const [email, setEmail] = useState("");
 
   const [draftAge, setDraftAge] = useState("");
+  const [draftSex, setDraftSex] = useState("");
   const [draftWeight, setDraftWeight] = useState("");
   const [draftHeight, setDraftHeight] = useState("");
+  const [draftEmail, setDraftEmail] = useState("");
 
   const openEdit = () => {
     setDraftAge(age);
+    setDraftSex(sex);
     setDraftWeight(weight);
     setDraftHeight(height);
+    setDraftEmail(email);
     setEditOpen(true);
   };
 
   const saveProfile = () => {
     setAge(draftAge);
+    setSex(draftSex);
     setWeight(draftWeight);
     setHeight(draftHeight);
+    setEmail(draftEmail);
     setEditOpen(false);
   };
 
@@ -101,7 +157,6 @@ export default function Profile() {
               <View style={styles.profileInfo}>
                 <Text style={styles.userName}>User</Text>
                 <Text style={styles.userSub}>Created 0 days ago</Text>
-                <Text style={styles.goalText}>Goal: Build strength and stay active</Text>
               </View>
             </View>
 
@@ -110,6 +165,12 @@ export default function Profile() {
                 <Text style={styles.statIcon}>🎂</Text>
                 <Text style={styles.statLabel}>Age</Text>
                 <Text style={styles.statValue}>{age ? `${age}` : "--"}</Text>
+              </View>
+
+              <View style={styles.statBox}>
+                <Text style={styles.statIcon}>⚧️</Text>
+                <Text style={styles.statLabel}>Sex</Text>
+                <Text style={styles.statValue}>{sex ? `${sex}` : "--"}</Text>
               </View>
 
               <View style={styles.statBox}>
@@ -126,122 +187,63 @@ export default function Profile() {
             </View>
           </View>
 
-          
-          <Text style={styles.sectionTitle}>Weekly summary</Text>
-          <View style={styles.summaryRow}>
-            <View style={styles.summaryCard}>
-              <Text style={styles.summaryNumber}>4</Text>
-              <Text style={styles.summaryLabel}>Workouts</Text>
-            </View>
+          <Text style={styles.weeklyTitle}>Weekly Sets Summary</Text>
 
-            <View style={styles.summaryCard}>
-              <Text style={styles.summaryNumber}>5</Text>
-              <Text style={styles.summaryLabel}>Active days</Text>
-            </View>
+          <ScrollView
+            ref={weeklyScrollRef}
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            scrollEventThrottle={16}
+            onScroll={(e) => {
+              const index = Math.round(e.nativeEvent.contentOffset.x / CARD_WIDTH);
+              setWeeklyIndex(index);
+            }}
+          >
+            {WEEKLY_SUMMARY.map((week) => (
+              <View key={week.title} style={[styles.weeklyCard, { width: CARD_WIDTH }]}>
+                <Text style={styles.weeklyCardTitle}>{week.title}</Text>
+                <BarChart
+                  data={{
+                    labels: CHART_LABELS,
+                    datasets: [{ data: [...week.sets] }],
+                  }}
+                  width={CARD_WIDTH - 24}
+                  height={200}
+                  yAxisLabel=""
+                  yAxisSuffix=" sets"
+                  fromZero
+                  segments={getChartSegments(week.sets)}
+                  showValuesOnTopOfBars
+                  chartConfig={{
+                    backgroundColor: "#fff",
+                    backgroundGradientFrom: "#fff",
+                    backgroundGradientTo: "#fff",
+                    decimalPlaces: 0,
+                    color: () => "#1e88e5",
+                    labelColor: () => "#7a889c",
+                    barPercentage: 0.35,
+                    propsForBackgroundLines: {
+                      stroke: "#e9eef6",
+                      strokeWidth: 1,
+                    },
+                    propsForLabels: {
+                      fontSize: 9,
+                      fontWeight: "700",
+                    },
+                  }}
+                  style={{ borderRadius: 12, marginLeft: -10 }}
+                />
+              </View>
+            ))}
+          </ScrollView>
 
-            <View style={styles.summaryCard}>
-              <Text style={styles.summaryNumber}>3</Text>
-              <Text style={styles.summaryLabel}>Day streak</Text>
-            </View>
+          <View style={styles.dotsRow}>
+            {WEEKLY_SUMMARY.map((_, i) => (
+              <View key={i} style={[styles.dot, i === weeklyIndex && styles.dotActive]} />
+            ))}
           </View>
 
-          
-          <Text style={styles.sectionTitle}>Target muscle (this week)</Text>
-          <Text style={styles.sectionSub}>
-            Most trained muscle groups from your workouts
-          </Text>
-
-          <View style={styles.chartCard}>
-            <View style={styles.progressItem}>
-              <View style={styles.progressTop}>
-                <Text style={styles.progressLabel}>Back</Text>
-                <Text style={styles.progressValue}>4 sessions</Text>
-              </View>
-              <View style={styles.progressTrack}>
-                <View style={[styles.progressFill, { width: "85%" }]} />
-              </View>
-            </View>
-
-            <View style={styles.progressItem}>
-              <View style={styles.progressTop}>
-                <Text style={styles.progressLabel}>Chest</Text>
-                <Text style={styles.progressValue}>3 sessions</Text>
-              </View>
-              <View style={styles.progressTrack}>
-                <View style={[styles.progressFill, { width: "68%" }]} />
-              </View>
-            </View>
-
-            <View style={styles.progressItem}>
-              <View style={styles.progressTop}>
-                <Text style={styles.progressLabel}>Shoulders</Text>
-                <Text style={styles.progressValue}>2 sessions</Text>
-              </View>
-              <View style={styles.progressTrack}>
-                <View style={[styles.progressFill, { width: "50%" }]} />
-              </View>
-            </View>
-
-            <View style={styles.progressItem}>
-              <View style={styles.progressTop}>
-                <Text style={styles.progressLabel}>Arms</Text>
-                <Text style={styles.progressValue}>2 sessions</Text>
-              </View>
-              <View style={styles.progressTrack}>
-                <View style={[styles.progressFill, { width: "46%" }]} />
-              </View>
-            </View>
-          </View>
-
-          
-          <Text style={styles.sectionTitle}>Cardio sessions (this week)</Text>
-          <Text style={styles.sectionSub}>
-            Your cardio activity breakdown
-          </Text>
-
-          <View style={styles.chartCard}>
-            <View style={styles.progressItem}>
-              <View style={styles.progressTop}>
-                <Text style={styles.progressLabel}>Running</Text>
-                <Text style={styles.progressValue}>20 min</Text>
-              </View>
-              <View style={styles.progressTrack}>
-                <View style={[styles.cardioFill, { width: "45%" }]} />
-              </View>
-            </View>
-
-            <View style={styles.progressItem}>
-              <View style={styles.progressTop}>
-                <Text style={styles.progressLabel}>Cycling</Text>
-                <Text style={styles.progressValue}>35 min</Text>
-              </View>
-              <View style={styles.progressTrack}>
-                <View style={[styles.cardioFill, { width: "75%" }]} />
-              </View>
-            </View>
-
-            <View style={styles.progressItem}>
-              <View style={styles.progressTop}>
-                <Text style={styles.progressLabel}>Rowing</Text>
-                <Text style={styles.progressValue}>15 min</Text>
-              </View>
-              <View style={styles.progressTrack}>
-                <View style={[styles.cardioFill, { width: "35%" }]} />
-              </View>
-            </View>
-
-            <View style={styles.progressItem}>
-              <View style={styles.progressTop}>
-                <Text style={styles.progressLabel}>Spinning</Text>
-                <Text style={styles.progressValue}>25 min</Text>
-              </View>
-              <View style={styles.progressTrack}>
-                <View style={[styles.cardioFill, { width: "58%" }]} />
-              </View>
-            </View>
-          </View>
-
-          
           <TouchableOpacity
             style={styles.logoutBtn}
             activeOpacity={0.85}
@@ -281,6 +283,14 @@ export default function Profile() {
                 keyboardType="numeric"
               />
 
+              <Text style={styles.inputLabel}>Sex</Text>
+              <TextInput
+                style={styles.input}
+                value={draftSex}
+                onChangeText={setDraftSex}
+                placeholder="Enter sex"
+              />
+
               <Text style={styles.inputLabel}>Weight</Text>
               <TextInput
                 style={styles.input}
@@ -297,6 +307,16 @@ export default function Profile() {
                 onChangeText={setDraftHeight}
                 placeholder="Enter height"
                 keyboardType="numeric"
+              />
+
+              <Text style={styles.inputLabel}>Email</Text>
+              <TextInput
+                style={styles.input}
+                value={draftEmail}
+                onChangeText={setDraftEmail}
+                placeholder="Enter email"
+                keyboardType="email-address"
+                autoCapitalize="none"
               />
 
               <TouchableOpacity style={styles.saveBtn} onPress={saveProfile} activeOpacity={0.85}>
@@ -395,125 +415,73 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "700",
   },
-  goalText: {
-    marginTop: 8,
-    color: "#3b4758",
-    fontSize: 14,
-    fontWeight: "600",
-    lineHeight: 20,
-  },
-
   statsRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 18,
+    flexWrap: "wrap",
+    gap: 6,
+    marginTop: 14,
   },
   statBox: {
-    width: "31.5%",
+    width: "48%",
     backgroundColor: "#f6f7fb",
-    borderRadius: 18,
-    paddingVertical: 14,
+    borderRadius: 14,
+    paddingVertical: 10,
     alignItems: "center",
   },
   statIcon: {
-    fontSize: 18,
-    marginBottom: 6,
+    fontSize: 15,
+    marginBottom: 4,
   },
   statLabel: {
     color: "#7a889c",
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: "800",
   },
   statValue: {
-    marginTop: 8,
-    fontSize: 20,
+    marginTop: 5,
+    fontSize: 16,
     fontWeight: "900",
     color: "#0b1220",
   },
 
-  sectionTitle: {
+  weeklyTitle: {
     fontSize: 18,
     fontWeight: "900",
     color: "#0b1220",
-    marginTop: 10,
+    marginBottom: 4,
   },
-  sectionSub: {
-    marginTop: 6,
-    marginBottom: 10,
-    color: "#7a889c",
-    fontSize: 13,
-    fontWeight: "600",
-  },
-
-  summaryRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 12,
-    marginBottom: 14,
-  },
-  summaryCard: {
-    width: "31.5%",
+  weeklyCard: {
     backgroundColor: "#fff",
-    borderRadius: 18,
+    borderRadius: 20,
     borderWidth: 1,
     borderColor: "#e6ebf2",
-    paddingVertical: 16,
-    alignItems: "center",
+    padding: 12,
   },
-  summaryNumber: {
-    fontSize: 22,
+  dotsRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 10,
+    marginBottom: 16,
+    gap: 6,
+  },
+  dot: {
+    width: 7,
+    height: 7,
+    borderRadius: 4,
+    backgroundColor: "#c9d4e8",
+  },
+  dotActive: {
+    backgroundColor: "#1e88e5",
+    width: 18,
+    borderRadius: 4,
+  },
+  weeklyCardTitle: {
+    fontSize: 16,
     fontWeight: "900",
     color: "#0b1220",
-  },
-  summaryLabel: {
-    marginTop: 6,
-    fontSize: 13,
-    color: "#7a889c",
-    fontWeight: "700",
-    textAlign: "center",
-  },
-
-  chartCard: {
-    backgroundColor: "#fff",
-    borderRadius: 22,
-    borderWidth: 1,
-    borderColor: "#e6ebf2",
-    padding: 16,
-    marginBottom: 18,
-  },
-  progressItem: {
-    marginBottom: 16,
-  },
-  progressTop: {
-    flexDirection: "row",
-    justifyContent: "space-between",
     marginBottom: 8,
-  },
-  progressLabel: {
-    fontSize: 15,
-    fontWeight: "800",
-    color: "#0b1220",
-  },
-  progressValue: {
-    fontSize: 13,
-    fontWeight: "700",
-    color: "#7a889c",
-  },
-  progressTrack: {
-    height: 10,
-    borderRadius: 999,
-    backgroundColor: "#edf1f7",
-    overflow: "hidden",
-  },
-  progressFill: {
-    height: "100%",
-    borderRadius: 999,
-    backgroundColor: "#0b1220",
-  },
-  cardioFill: {
-    height: "100%",
-    borderRadius: 999,
-    backgroundColor: "#3b82f6",
   },
 
   logoutBtn: {
@@ -573,9 +541,9 @@ const styles = StyleSheet.create({
   },
 
   inputLabel: {
-    marginTop: 10,
-    marginBottom: 8,
-    fontSize: 14,
+    marginTop: 8,
+    marginBottom: 6,
+    fontSize: 13,
     fontWeight: "800",
     color: "#0b1220",
   },
@@ -583,10 +551,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#f6f7fb",
     borderWidth: 1,
     borderColor: "#e6ebf2",
-    borderRadius: 14,
-    paddingHorizontal: 14,
-    paddingVertical: 14,
-    fontSize: 15,
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    fontSize: 14,
     color: "#111827",
   },
 

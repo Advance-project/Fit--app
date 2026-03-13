@@ -21,19 +21,23 @@ type Route = {
   params?: { existingExercises?: ExerciseItem[] };
 };
 
+// Placeholder — will be replaced with data fetched from the backend
 const EXERCISES: ExerciseItem[] = [
-  { id: "1", name: "Air Bike", muscle: "Cardio" },
-  { id: "2", name: "Arnold Press (Dumbbell)", muscle: "Shoulders" },
-  { id: "3", name: "Around The World", muscle: "Chest" },
-  { id: "4", name: "Assisted Pistol Squats", muscle: "Quadriceps" },
-  { id: "5", name: "Back Extension (Hyperextension)", muscle: "Lower Back" },
-  { id: "6", name: "Back Extension (Machine)", muscle: "Lower Back" },
-  { id: "7", name: "Back Extension (Weighted Hyperextension)", muscle: "Lower Back" },
-  { id: "8", name: "Ball Slams", muscle: "Cardio" },
+  { id: "1", name: "Barbell Back Squat", muscle: "Legs" },
 ];
 
 const EQUIPMENT_OPTIONS = ["All Equipment", "None", "Barbell", "Dumbbell", "Machine"] as const;
-const MUSCLE_OPTIONS = ["All Muscles", "Chest", "Biceps", "Triceps", "Shoulders"] as const;
+const MUSCLE_OPTIONS = [
+  "All Muscles",
+  "Chest",
+  "Biceps",
+  "Triceps",
+  "Shoulders",
+  "Back",
+  "Abs",
+  "Legs",
+  "Cardio",
+] as const;
 
 export default function AddExercise() {
   const navigation = useNavigation<Nav>();
@@ -187,8 +191,23 @@ export default function AddExercise() {
                   <Text style={styles.rowSub}>{item.muscle}</Text>
                 </View>
 
-                <View style={styles.rightIcon}>
-                  <Text style={{ fontSize: 18 }}>{alreadyAdded ? "✓" : "📈"}</Text>
+                <View
+                  style={[
+                    styles.rightIcon,
+                    isSelected && styles.rightIconSelected,
+                    alreadyAdded && styles.rightIconAlreadyAdded,
+                  ]}
+                >
+                  {(alreadyAdded || isSelected) ? (
+                    <Text
+                      style={[
+                        styles.rightIconCheck,
+                        isSelected && styles.rightIconCheckSelected,
+                      ]}
+                    >
+                      ✓
+                    </Text>
+                  ) : null}
                 </View>
               </TouchableOpacity>
             );
@@ -355,7 +374,7 @@ const styles = StyleSheet.create({
   thumbText: { fontSize: 20 },
 
   rowTitle: { fontSize: 18, fontWeight: "600", color: "#111827" },
-  rowSub: { marginTop: 4, fontSize: 15, color: "#9aa3af" },
+  rowSub: { marginTop: 4, fontSize: 15, color: "#a2abb8" },
 
   rightIcon: {
     width: 34,
@@ -363,8 +382,24 @@ const styles = StyleSheet.create({
     borderRadius: 17,
     borderWidth: 2,
     borderColor: "#111827",
+    backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
+  },
+  rightIconSelected: {
+    backgroundColor: "#1e88e5",
+    borderColor: "#1e88e5",
+  },
+  rightIconAlreadyAdded: {
+    borderColor: "#9aa3af",
+  },
+  rightIconCheck: {
+    fontSize: 18,
+    color: "#111827",
+    fontWeight: "800",
+  },
+  rightIconCheckSelected: {
+    color: "#fff",
   },
 
   sep: { height: 1, backgroundColor: "#eef2f7", marginLeft: 18 },
