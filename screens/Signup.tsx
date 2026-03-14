@@ -30,6 +30,10 @@ export default function Signup() {
           placeholder="Email"
           style={styles.input}
           placeholderTextColor="#777"
+          autoComplete="off"
+          textContentType="none"
+          importantForAutofill="no"
+          autoCorrect={false}
         />
 
         <TextInput
@@ -38,6 +42,10 @@ export default function Signup() {
           placeholderTextColor="#777"
           value={username}
           onChangeText={setUsername}
+          autoComplete="off"
+          textContentType="none"
+          importantForAutofill="no"
+          autoCorrect={false}
         />
         <Text style={styles.helperText}>
           3-20 characters, letters, numbers, and underscores only
@@ -48,6 +56,10 @@ export default function Signup() {
           style={styles.input}
           secureTextEntry
           placeholderTextColor="#777"
+          autoComplete="off"
+          textContentType="none"
+          importantForAutofill="no"
+          autoCorrect={false}
         />
         <Text style={styles.helperText}>
           Min 8 chars: uppercase, lowercase, number, special character
@@ -108,7 +120,10 @@ const styles = StyleSheet.create({
   },
 
   input: {
-    backgroundColor: "#fff",
+    backgroundColor: "#f8fafc",
+    color: "#111827",
+    borderWidth: 1,
+    borderColor: "#d5dee9",
     paddingVertical: 14,
     paddingHorizontal: 16,
     borderRadius: 14,

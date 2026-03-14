@@ -10,7 +10,7 @@ import {
   TextInput,
   Alert,
   Platform,
-  Dimensions,
+  useWindowDimensions,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
@@ -45,8 +45,6 @@ const WEEKLY_SUMMARY = [
   },
 ] as const;
 
-const CARD_WIDTH = Dimensions.get("window").width - 28;
-
 // Returns a segment count so Y-axis ticks land on round numbers
 function getChartSegments(sets: readonly number[]): number {
   const max = Math.max(...sets);
@@ -59,30 +57,31 @@ function getChartSegments(sets: readonly number[]): number {
 
 export default function Profile() {
   const navigation = useNavigation<any>();
+  const { width: screenWidth } = useWindowDimensions();
+  const cardWidth = Math.max(screenWidth - 28, 0);
 
   const [editOpen, setEditOpen] = useState(false);
   const [weeklyIndex, setWeeklyIndex] = useState(1);
+  const [weeklyChartWidth, setWeeklyChartWidth] = useState(0);
   const weeklyScrollRef = useRef<ScrollView>(null);
 
   useEffect(() => {
-    weeklyScrollRef.current?.scrollTo({ x: CARD_WIDTH * 1, animated: false });
-  }, []);
+    if (!cardWidth) return;
+    weeklyScrollRef.current?.scrollTo({ x: cardWidth, animated: false });
+  }, [cardWidth]);
 
   const [age, setAge] = useState("");
-  const [sex, setSex] = useState("");
   const [weight, setWeight] = useState("");
   const [height, setHeight] = useState("");
   const [email, setEmail] = useState("");
 
   const [draftAge, setDraftAge] = useState("");
-  const [draftSex, setDraftSex] = useState("");
   const [draftWeight, setDraftWeight] = useState("");
   const [draftHeight, setDraftHeight] = useState("");
   const [draftEmail, setDraftEmail] = useState("");
 
   const openEdit = () => {
     setDraftAge(age);
-    setDraftSex(sex);
     setDraftWeight(weight);
     setDraftHeight(height);
     setDraftEmail(email);
@@ -91,7 +90,6 @@ export default function Profile() {
 
   const saveProfile = () => {
     setAge(draftAge);
-    setSex(draftSex);
     setWeight(draftWeight);
     setHeight(draftHeight);
     setEmail(draftEmail);
@@ -168,12 +166,6 @@ export default function Profile() {
               </View>
 
               <View style={styles.statBox}>
-                <Text style={styles.statIcon}>⚧️</Text>
-                <Text style={styles.statLabel}>Sex</Text>
-                <Text style={styles.statValue}>{sex ? `${sex}` : "--"}</Text>
-              </View>
-
-              <View style={styles.statBox}>
                 <Text style={styles.statIcon}>⚖️</Text>
                 <Text style={styles.statLabel}>Weight</Text>
                 <Text style={styles.statValue}>{weight ? `${weight} kg` : "--"}</Text>
@@ -196,44 +188,57 @@ export default function Profile() {
             showsHorizontalScrollIndicator={false}
             scrollEventThrottle={16}
             onScroll={(e) => {
-              const index = Math.round(e.nativeEvent.contentOffset.x / CARD_WIDTH);
+              const index = Math.round(e.nativeEvent.contentOffset.x / cardWidth);
               setWeeklyIndex(index);
             }}
           >
             {WEEKLY_SUMMARY.map((week) => (
-              <View key={week.title} style={[styles.weeklyCard, { width: CARD_WIDTH }]}>
+              <View key={week.title} style={[styles.weeklyCard, { width: cardWidth }]}>
                 <Text style={styles.weeklyCardTitle}>{week.title}</Text>
-                <BarChart
-                  data={{
-                    labels: CHART_LABELS,
-                    datasets: [{ data: [...week.sets] }],
+                <View
+                  style={styles.weeklyChartWrap}
+                  onLayout={(e) => {
+                    const nextWidth = Math.floor(e.nativeEvent.layout.width);
+                    if (nextWidth > 0 && nextWidth !== weeklyChartWidth) {
+                      setWeeklyChartWidth(nextWidth);
+                    }
                   }}
-                  width={CARD_WIDTH - 24}
-                  height={200}
-                  yAxisLabel=""
-                  yAxisSuffix=" sets"
-                  fromZero
-                  segments={getChartSegments(week.sets)}
-                  showValuesOnTopOfBars
-                  chartConfig={{
-                    backgroundColor: "#fff",
-                    backgroundGradientFrom: "#fff",
-                    backgroundGradientTo: "#fff",
-                    decimalPlaces: 0,
-                    color: () => "#1e88e5",
-                    labelColor: () => "#7a889c",
-                    barPercentage: 0.35,
-                    propsForBackgroundLines: {
-                      stroke: "#e9eef6",
-                      strokeWidth: 1,
-                    },
-                    propsForLabels: {
-                      fontSize: 9,
-                      fontWeight: "700",
-                    },
-                  }}
-                  style={{ borderRadius: 12, marginLeft: -10 }}
-                />
+                >
+                  {weeklyChartWidth > 0 ? (
+                    <BarChart
+                      key={`${week.title}-${weeklyChartWidth}`}
+                      data={{
+                        labels: CHART_LABELS,
+                        datasets: [{ data: [...week.sets] }],
+                      }}
+                      width={weeklyChartWidth}
+                      height={200}
+                      yAxisLabel=""
+                      yAxisSuffix=" sets"
+                      fromZero
+                      segments={getChartSegments(week.sets)}
+                      showValuesOnTopOfBars
+                      chartConfig={{
+                        backgroundColor: "#fff",
+                        backgroundGradientFrom: "#fff",
+                        backgroundGradientTo: "#fff",
+                        decimalPlaces: 0,
+                        color: () => "#1e88e5",
+                        labelColor: () => "#7a889c",
+                        barPercentage: 0.35,
+                        propsForBackgroundLines: {
+                          stroke: "#e9eef6",
+                          strokeWidth: 1,
+                        },
+                        propsForLabels: {
+                          fontSize: 9,
+                          fontWeight: "700",
+                        },
+                      }}
+                      style={styles.weeklyChart}
+                    />
+                  ) : null}
+                </View>
               </View>
             ))}
           </ScrollView>
@@ -281,14 +286,6 @@ export default function Profile() {
                 onChangeText={setDraftAge}
                 placeholder="Enter age"
                 keyboardType="numeric"
-              />
-
-              <Text style={styles.inputLabel}>Sex</Text>
-              <TextInput
-                style={styles.input}
-                value={draftSex}
-                onChangeText={setDraftSex}
-                placeholder="Enter sex"
               />
 
               <Text style={styles.inputLabel}>Weight</Text>
@@ -482,6 +479,12 @@ const styles = StyleSheet.create({
     fontWeight: "900",
     color: "#0b1220",
     marginBottom: 8,
+  },
+  weeklyChartWrap: {
+    width: "100%",
+  },
+  weeklyChart: {
+    borderRadius: 12,
   },
 
   logoutBtn: {

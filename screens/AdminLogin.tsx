@@ -11,8 +11,8 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { setAdminAuthenticated } from "./userStore";
 
-const ADMIN_ID = "admin123";
-const ADMIN_PASSWORD = "fitadmin@2026";
+const ADMIN_ID = "a";
+const ADMIN_PASSWORD = "a";
 
 export default function AdminLogin() {
   const navigation = useNavigation<any>();
@@ -53,6 +53,9 @@ export default function AdminLogin() {
           value={adminId}
           onChangeText={setAdminId}
           autoCapitalize="none"
+          autoComplete="off"
+          textContentType="none"
+          importantForAutofill="no"
           autoCorrect={false}
         />
 
@@ -64,6 +67,9 @@ export default function AdminLogin() {
           value={password}
           onChangeText={setPassword}
           autoCapitalize="none"
+          autoComplete="off"
+          textContentType="none"
+          importantForAutofill="no"
           autoCorrect={false}
         />
 
@@ -114,7 +120,10 @@ const styles = StyleSheet.create({
   },
 
   input: {
-    backgroundColor: "#fff",
+    backgroundColor: "#f8fafc",
+    color: "#111827",
+    borderWidth: 1,
+    borderColor: "#d5dee9",
     paddingVertical: 14,
     paddingHorizontal: 16,
     borderRadius: 14,

@@ -29,7 +29,7 @@ export default function AdminWorkoutTemplates() {
   const [programs, setPrograms] = useState<ProgramItem[]>([
     {
       id: "default_template_1",
-      title: "Chest",
+      title: "C",
       subtitle: "2",
       targetMuscle: "Chest",
     },
@@ -87,7 +87,7 @@ export default function AdminWorkoutTemplates() {
                 }
               >
                 <View style={styles.programThumb}>
-                  <Text style={styles.programThumbText}>{p.title}</Text>
+                  <Text style={styles.programThumbText}>{p.targetMuscle}</Text>
                 </View>
 
                 <View style={styles.programInfo}>

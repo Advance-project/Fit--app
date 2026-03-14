@@ -29,6 +29,10 @@ export default function Login() {
           placeholder="Email"
           style={styles.input}
           placeholderTextColor="#777"
+          autoComplete="off"
+          textContentType="none"
+          importantForAutofill="no"
+          autoCorrect={false}
         />
 
         <TextInput
@@ -36,6 +40,10 @@ export default function Login() {
           style={styles.input}
           secureTextEntry
           placeholderTextColor="#777"
+          autoComplete="off"
+          textContentType="none"
+          importantForAutofill="no"
+          autoCorrect={false}
         />
 
         <TouchableOpacity
@@ -91,7 +99,10 @@ const styles = StyleSheet.create({
   },
 
   input: {
-    backgroundColor: "#fff",
+    backgroundColor: "#f8fafc",
+    color: "#111827",
+    borderWidth: 1,
+    borderColor: "#d5dee9",
     paddingVertical: 14,
     paddingHorizontal: 16,
     borderRadius: 14,

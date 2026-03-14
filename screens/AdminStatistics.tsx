@@ -9,10 +9,12 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
-import { LineChart, BarChart } from "react-native-chart-kit";
+import { BarChart } from "react-native-chart-kit";
 import { isAdminAuthenticated } from "./userStore";
 
 const screenWidth = Dimensions.get("window").width;
+const CHART_WIDTH = screenWidth - 56;
+const DAY_LABELS = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
 
 type StatsResponse = {
   totalUsers: number;
@@ -21,6 +23,11 @@ type StatsResponse = {
   weeklySignupsLastWeek: number[];
   weeklySignupsThisWeek: number[];
 };
+
+function getYAxisSegments(values: number[]): number {
+  // Keep Y-axis tick distance at exactly 1 unit: 0,1,2,3...
+  return Math.max(...values, 1);
+}
 
 export default function AdminStatistics() {
   const navigation = useNavigation<any>();
@@ -49,6 +56,9 @@ export default function AdminStatistics() {
     decimalPlaces: 0,
     color: (opacity = 1) => `rgba(11, 18, 32, ${opacity})`,
     labelColor: (opacity = 1) => `rgba(107, 114, 128, ${opacity})`,
+    propsForLabels: {
+      fontSize: 11,
+    },
     propsForDots: {
       r: "5",
       strokeWidth: "2",
@@ -109,19 +119,20 @@ export default function AdminStatistics() {
             <Text style={styles.chartTitle}>New users last week</Text>
             <BarChart
               data={{
-                labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+                labels: DAY_LABELS,
                 datasets: [
                   {
                     data: stats.weeklySignupsLastWeek,
                   },
                 ],
               }}
-              width={screenWidth - 48}
+              width={CHART_WIDTH}
               height={220}
               yAxisLabel=""
               yAxisSuffix=""
               chartConfig={chartConfig}
               fromZero
+              segments={getYAxisSegments(stats.weeklySignupsLastWeek)}
               withInnerLines
               showValuesOnTopOfBars
               style={styles.chart}
@@ -130,23 +141,24 @@ export default function AdminStatistics() {
 
           <View style={styles.chartCard}>
             <Text style={styles.chartTitle}>New users this week</Text>
-            <LineChart
+            <BarChart
               data={{
-                labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+                labels: DAY_LABELS,
                 datasets: [
                   {
                     data: stats.weeklySignupsThisWeek,
                   },
                 ],
               }}
-              width={screenWidth - 48}
+              width={CHART_WIDTH}
               height={220}
-              yAxisInterval={1}
+              yAxisLabel=""
+              yAxisSuffix=""
+              segments={getYAxisSegments(stats.weeklySignupsThisWeek)}
               chartConfig={chartConfig}
-              bezier
+              fromZero
               withInnerLines
-              withOuterLines={false}
-              withVerticalLines={false}
+              showValuesOnTopOfBars
               style={styles.chart}
             />
           </View>
